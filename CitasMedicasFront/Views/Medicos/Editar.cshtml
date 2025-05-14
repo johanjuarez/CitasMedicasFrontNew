@@ -1,0 +1,176 @@
+﻿@model CitasMedicasFront.Models.Medico
+
+@{
+    ViewBag.Title = "Actualizar Medico";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Crear Nuevo Personal</h2>
+
+@using (Html.BeginForm("Actualizar", "Medicos", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" id="medicoId" name="MedicoId" value="@Model.MedicoId" />
+
+
+    <!-- Departamento con Modal -->
+    <div class="form-group">
+        <label for="personal">Miembro del personal</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="personal" value="@ViewBag.PersonalNombre" readonly />
+            <div class="input-group-append">
+                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#personalModal">
+                    <i class="fa fa-search"></i> Seleccionar
+                </button>
+            </div>
+        </div>
+        <input type="hidden" name="PersonalId" id="personalId" value="@Model.PersonalId" />
+    </div>
+
+
+    <!-- Consultorio con Modal -->
+    <div class="form-group">
+        <label for="personal">Miembro del personal</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="consultorio" value="@ViewBag.ConsultorioNombre" readonly />
+            <div class="input-group-append">
+                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#consultorioModal">
+                    <i class="fa fa-search"></i> Seleccionar
+                </button>
+            </div>
+        </div>
+        <input type="hidden" name="ConsultorioId" id="consultorioId" value="@Model.ConsultorioId" />
+    </div>
+
+    <div class="form-group">
+        <label for="especialidad">Especialidad</label>
+        <input type="text" name="Especialidad" id="especialidad" class="form-control" value="@Model.Especialidad" required />
+    </div>
+
+    <div class="form-group">
+        <label for="cedulaprofesional">Cedula Profesional</label>
+        <input type="text" name="CedulaProfesional" id="cedulaprofesional" class="form-control" value="@Model.CedulaProfesional" required />
+    </div>
+
+    <div class="form-group">
+        <label for="fechaRegistro">Fecha de registro</label>
+        <input type="date" name="FechaRegistro" id="fechaRegistro" class="form-control" value="@Model.FechaRegistro.ToString("yyyy-MM-dd")" required />
+    </div>
+
+    <input type="hidden" name="FechaUltimaModificacion" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
+
+    <button type="submit" class="btn btn-outline-success">Actualizar</button>
+}
+
+<hr />
+<a href="@Url.Action("Index", "Medicos")" class="btn btn-outline-secondary">Volver a la lista</a>
+
+<!-- Modal de selección de personal -->
+<div class="modal fade" id="personalModal" tabindex="-1" role="dialog" aria-labelledby="departamentoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="departamentoModalLabel">Seleccionar Departamento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var personal in ViewBag.Personal as List<CitasMedicasFront.Models.Personal>)
+                        {
+                            <tr>
+                                <td>@personal.PersonalId</td>
+                                <td>@personal.Nombre  @personal.ApellidoPaterno  @personal.ApellidoMaterno</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary seleccionar-personal"
+                                            data-id="@personal.PersonalId"
+                                            data-nombre="@personal.Nombre">
+                                        Seleccionar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de selección de personal -->
+<div class="modal fade" id="consultorioModal" tabindex="-1" role="dialog" aria-labelledby="departamentoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="departamentoModalLabel">Seleccionar Departamento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Especialidad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var consultorio in ViewBag.Consultorios as List<CitasMedicasFront.Models.Consultorio>)
+                        {
+                            <tr>
+                                <td>@consultorio.ConsultorioId</td>
+                                <td>@consultorio.Nombre</td>
+                                <td>@consultorio.Especialidad</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary seleccionar-consultorio"
+                                            data-id="@consultorio.ConsultorioId"
+                                            data-nombre="@consultorio.Nombre">
+                                        Seleccionar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).on('click', '.seleccionar-personal', function () {
+        var personalId = $(this).data('id');
+        var departamentoNombre = $(this).data('nombre');
+
+        $('#personal').val(departamentoNombre);
+        $('#personalId').val(personalId);
+
+        $('#personalModal').modal('hide');
+    });
+</script>
+
+<script>
+    $(document).on('click', '.seleccionar-consultorio', function () {
+        var consultorioId = $(this).data('id');
+        var consultorioNombre = $(this).data('nombre');
+
+        $('#consultorio').val(consultorioNombre);
+        $('#consultorioId').val(consultorioId);
+
+        $('#consultorioModal').modal('hide');
+    });
+</script>

@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Departamentos";
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Layout común
+}
+
+<h2>Gestión de Departamentos</h2>
+
+<!-- Enlace para agregar nuevo paciente -->
+<a href="@Url.Action("Crear", "Departamentos")" class="btn btn-outline-success">Agregar Nuevo Departamento</a>
+
+<table id="pacientesTable" class="display table table-striped">
+    <thead>
+        <tr>
+            @*<th>Id</th>*@
+            <th>Nombre</th>
+            <th>Descripcion</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Aquí recorres directamente la lista de pacientes que está en el modelo -->
+        @foreach (var Departamento in Model)
+        {
+            <tr>
+                @*<td>@Departamento.DepartamentoId</td>*@
+                <td>@Departamento.Nombre</td>
+                <td>@Departamento.Descripcion</td>
+                <td>
+                    <a href="@Url.Action("Editar", "Departamentos", new { id = Departamento.DepartamentoId })" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="@Url.Action("Eliminar", "Departamentos", new { id = Departamento.DepartamentoId })" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Inicialización de DataTables para habilitar paginación -->
+<script>
+    $(document).ready(function () {
+        $('#pacientesTable').DataTable({
+            "pageLength": 5, // Número de registros por página
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/1.11.5/i18n/Spanish.json" // Idioma en español
+            }
+        });
+    });
+</script>

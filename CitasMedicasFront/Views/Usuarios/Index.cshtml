@@ -1,0 +1,56 @@
+﻿@model IEnumerable<CitasMedicasFront.Models.Usuarios>
+
+@{
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Gestión de Usuarios</h2>
+
+<!-- Botón para agregar nuevo usuario -->
+<a href="@Url.Action("Crear", "Usuarios")" class="btn btn-outline-success">Agregar Nuevo Usuario</a>
+
+<table id="usuariosTable" class="display table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Folio</th>
+            <th>Rol</th>
+            <th>Fecha de Registro</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var usuario in Model)
+        {
+            <tr>
+                <td>@usuario.UsuarioId</td>
+                <td>@usuario.Usuario</td>
+                <td>@usuario.Folio</td>
+                <td>@usuario.RolId</td>
+                <td>@usuario.FechaRegistro.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>
+                    <a href="@Url.Action("Editar", "Usuarios", new { id = usuario.UsuarioId })" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="@Url.Action("Eliminar", "Usuarios", new { id = usuario.UsuarioId })" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- DataTables -->
+<script>
+    $(document).ready(function () {
+        $('#usuariosTable').DataTable({
+            "pageLength": 5,
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/1.11.5/i18n/Spanish.json"
+            }
+        });
+    });
+</script>
+
+
+
+

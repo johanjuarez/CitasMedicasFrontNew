@@ -1,0 +1,56 @@
+﻿@model CitasMedicasFront.Models.Usuarios
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Crear Usuario</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container mt-4">
+        <h2 class="text-center">Crear Nuevo Usuario</h2>
+
+        <div class="card shadow-lg p-4">
+            @using (Html.BeginForm("Guardar", "Usuarios", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label for="usuario" class="form-label">Usuario</label>
+                    <input type="text" name="Usuario" id="usuario" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="folio" class="form-label">Folio</label>
+                    <input type="text" name="Folio" id="folio" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="contraseña" class="form-label">Contraseña</label>
+                    <input type="password" name="Contraseña" id="contraseña" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="rolId" class="form-label">Rol</label>
+                    <input type="number" name="RolId" id="rolId" class="form-control" required />
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">Guardar</button>
+            }
+        </div>
+
+        <div class="text-center mt-3">
+            <a href="@Url.Action("Index", "Usuarios")" class="btn btn-outline-secondary">Volver a la lista</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

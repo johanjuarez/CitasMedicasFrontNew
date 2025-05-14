@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Citas";
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Layout común
+}
+
+<h2>Gestión de Citas</h2>
+
+<!-- Enlace para agregar nuevo paciente -->
+<a href="@Url.Action("Crear", "Citas")" class="btn btn-outline-success">Agregar Nueva Cita</a>
+
+
+<table id="pacientesTable" class="display table table-striped">
+    <thead>
+        <tr>
+
+            <th>Fecha y hora</th>
+            <th>Motivo</th>
+            <th>Notas</th>
+            <th>Acciones</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Aquí recorres directamente la lista de pacientes que está en el modelo -->
+        @foreach (var cita in Model)
+        {
+            <tr>
+
+                <td>@cita.FechaHora</td>
+                <td>@cita.Motivo</td>
+                <td>@cita.Notas</td>
+                <td>
+                    @*<a href="@Url.Action("Editar", "Citas", new { id = cita.CitaId })" class="btn btn-warning btn-sm">Editar</a>*@
+                    <a href="@Url.Action("Eliminar", "Citas", new { id = cita.CitaId })" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Inicialización de DataTables para habilitar paginación -->
+<script>
+    $(document).ready(function () {
+        $('#pacientesTable').DataTable({
+            "pageLength": 5, // Número de registros por página
+            "language": {
+                "url": "https://cdn.datatables.net/plug-ins/1.11.5/i18n/Spanish.json" // Idioma en español
+            }
+        });
+    });
+</script>

@@ -1,0 +1,87 @@
+﻿@model CitasMedicasFront.Models.Paciente
+
+@{
+    ViewBag.Title = "Editar Paciente";
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Layout común
+}
+
+<h2>Editar Paciente</h2>
+
+@using (Html.BeginForm("Actualizar", "Pacientes", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="PacienteId" value="@Model.PacienteId" />
+
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" name="Nombre" id="nombre" class="form-control" value="@Model.Nombre" required />
+    </div>
+
+    <div class="form-group">
+        <label for="apellidoPaterno">Apellido Paterno</label>
+        <input type="text" name="ApellidoPaterno" id="apellidoPaterno" class="form-control" value="@Model.ApellidoPaterno" required />
+    </div>
+
+    <div class="form-group">
+        <label for="apellidoMaterno">Apellido Materno</label>
+        <input type="text" name="ApellidoMaterno" id="apellidoMaterno" class="form-control" value="@Model.ApellidoMaterno" required />
+    </div>
+
+    <div class="form-group">
+        <label for="fechaNacimiento">Fecha de Nacimiento</label>
+        <input type="date" name="FechaNacimiento" id="fechaNacimiento" class="form-control" value="@Model.FechaNacimiento.ToString("yyyy-MM-dd")" required />
+    </div>
+
+    <div class="form-group">
+        <label for="sexo">Sexo</label>
+        <input type="text" name="Sexo" id="sexo" class="form-control" value="@Model.Sexo" required />
+    </div>
+
+    <div class="form-group">
+        <label for="correo">Correo</label>
+        <input type="email" name="Correo" id="correo" class="form-control" value="@Model.Correo" required />
+    </div>
+
+    <div class="form-group">
+        <label for="telefono">Teléfono</label>
+        <input type="text" name="Telefono" id="telefono" class="form-control" value="@Model.Telefono" required />
+    </div>
+
+    <div class="form-group">
+        <label for="direccion">Direccion</label>
+        <input type="text" name="Direccion" id="direccion" class="form-control" value="@Model.Direccion" required />
+    </div>
+
+    <div class="form-group">
+        <label for="nss">NSS</label>
+        <input type="text" name="NSS" id="nss" class="form-control" value="@Model.NSS" required />
+    </div>
+
+    <div class="form-group">
+        <label for="alergias">Alergias</label>
+        <input type="text" name="Alergias" id="alergias" class="form-control" value="@Model.Alergias" required />
+    </div>
+
+    <div class="form-group">
+        <label for="enfermedadescronicas">Enfermedades Crónicas</label>
+        <input type="text" name="EnfermedadesCronicas" id="enfermedadescronicas" class="form-control" value="@Model.EnfermedadesCronicas" required />
+    </div>
+
+    <div class="form-group">
+        <label for="discapacidades">Discapacidades</label>
+        <input type="text" name="Discapacidades" id="discapacidades" class="form-control" value="@Model.Discapacidades" required />
+    </div>
+
+    <div class="form-group">
+        <label for="fecharegistro">Fecha de Registro</label>
+        <input type="date" name="FechaRegistro" id="fecharegistro" class="form-control" value="@Model.FechaRegistro.ToString("yyyy-MM-dd")" required />
+    </div>
+
+    <input type="hidden" name="FechaUltimaModificacion" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
+
+    <button type="submit" class="btn btn-outline-success">Actualizar</button>
+}
+
+<hr />
+<a href="@Url.Action("Index", "Pacientes")" class="btn btn-outline-secondary">Volver a la lista</a>

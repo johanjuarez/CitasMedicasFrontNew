@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Editar Rol de usuario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Editar Rol</h2>
+
+@using (Html.BeginForm("Actualizar", "Roles", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" id="rolId" name="RolId" value="@Model.RolId" />
+
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" name="Nombre" id="nombre" class="form-control" value="@Model.Nombre" required />
+    </div>
+    <div class="form-group">
+        <label for="Descripcion">Apellido Paterno</label>
+        <input type="text" name="Descripcion" id="descripcion" class="form-control" value="@Model.Descripcion" required />
+    </div>
+    <input type="hidden" name="FechaRegistro" value="@Model.FechaRegistro" />
+
+
+    <button type="submit" class="btn btn-outline-success">Actualizar</button>
+}
+
+<hr />
+<a href="@Url.Action("Index", "Roles")" class="btn btn-outline-secondary">Volver a la lista</a>

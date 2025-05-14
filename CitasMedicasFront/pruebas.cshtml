@@ -1,0 +1,41 @@
+﻿<!-- Campo de búsqueda -->
+<input type="text" id="busquedaPaciente" placeholder="Buscar paciente..." />
+
+<!-- Lista donde se mostrarán los resultados -->
+<ul id="resultadoBusqueda"></ul>
+
+<!-- Agregar jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // Función para hacer la búsqueda con AJAX
+    $('#busquedaPaciente').on('input', function () {
+        var query = $(this).val(); // Obtener el texto ingresado en el input
+
+        if (query.length >= 3) { // Iniciar búsqueda cuando se han ingresado al menos 3 caracteres
+            $.ajax({
+                url: 'https://localhost:44323/api/busqueda/pacientes', // Ruta de la API
+                type: 'GET',
+                data: { query: query }, // Pasamos el valor ingresado como parámetro 'query'
+                success: function (response) {
+                    // Si hay resultados, los mostramos en la lista
+                    $('#resultadoBusqueda').empty(); // Limpiamos los resultados anteriores
+
+                    response.forEach(function (paciente) {
+                        $('#resultadoBusqueda').append(
+                            '<li>' + paciente.Nombre + ' ' + paciente.ApellidoPaterno + ' ' + paciente.ApellidoMaterno + '</li>'
+                        );
+                    });
+                },
+                error: function () {
+                    // Si hay error en la solicitud
+                    $('#resultadoBusqueda').empty();
+                    $('#resultadoBusqueda').append('<li>No se encontraron pacientes.</li>');
+                }
+            });
+        } else {
+            // Si se ingresan menos de 3 caracteres, limpiar los resultados
+            $('#resultadoBusqueda').empty();
+        }
+    });
+</script>

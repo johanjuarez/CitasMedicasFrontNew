@@ -1,0 +1,168 @@
+﻿@model CitasMedicasFront.Models.Personal
+
+@{
+    ViewBag.Title = "Crear Nuevo Personal";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Crear Nuevo Personal</h2>
+
+@using (Html.BeginForm("Guardar", "Personal", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" name="Nombre" id="nombre" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="apellidoPaterno">Apellido Paterno</label>
+        <input type="text" name="ApellidoPaterno" id="apellidoPaterno" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="apellidoMaterno">Apellido Materno</label>
+        <input type="text" name="ApellidoMaterno" id="apellidoMaterno" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="fechaNacimiento">Fecha de Nacimiento</label>
+        <input type="date" name="FechaNacimiento" id="fechaNacimiento" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="sexo">Sexo</label>
+        <select name="Sexo" id="sexo" class="form-control" required>
+            <option value="Selecciona una opcion....">Selecciona una opcion....</option>
+            <option value="hombre">Hombre</option>
+            <option value="mujer">Mujer</option>
+            <option value="indefinido">Indefinido</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="correo">Correo</label>
+        <input type="email" name="Correo" id="correo" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="telefono">Teléfono</label>
+        <input type="text" name="Telefono" id="telefono" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="cargo">Cargo</label>
+        <input type="text" name="Cargo" id="cargo" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="rfc">RFC</label>
+        <input type="text" name="RFC" id="rfc" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="nss">NSS</label>
+        <input type="text" name="NSS" id="nss" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="direccion">Direccion</label>
+        <input type="text" name="Direccion" id="direccion" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="turno">Turno</label>
+        <select name="Turno" id="turno" class="form-control" required>
+            <option value="Selecciona una opcion....">Selecciona una opcion....</option>
+            <option value="matutino">Matutino</option>
+            <option value="vespertino">Vespertino</option>
+            <option value="nocturno">Nocturno</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="curp">CURP</label>
+        <input type="text" name="CURP" id="curp" class="form-control" required />
+    </div>
+
+    <!-- Departamento con Modal -->
+    <div class="form-group">
+        <label for="departamento">Departamento</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="departamento" readonly />
+            <div class="input-group-append">
+                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#departamentoModal">
+                    <i class="fa fa-search"></i> Seleccionar
+                </button>
+            </div>
+        </div>
+        <input type="hidden" name="DepartamentoId" id="departamentoId" />
+    </div>
+
+    <div class="form-group">
+        <label for="fechaContratacion">Fecha de Contratación</label>
+        <input type="date" name="FechaContratacion" id="fechaContratacion" class="form-control" required />
+    </div>
+
+    <input type="hidden" name="FechaRegistro" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
+
+    <button type="submit" class="btn btn-outline-success">Guardar</button>
+}
+
+<hr />
+<a href="@Url.Action("Index", "Personal")" class="btn btn-outline-secondary">Volver a la lista</a>
+
+<!-- Modal de selección de departamento -->
+<div class="modal fade" id="departamentoModal" tabindex="-1" role="dialog" aria-labelledby="departamentoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="departamentoModalLabel">Seleccionar Departamento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var dep in ViewBag.Departamentos as List<CitasMedicasFront.Models.Departamento>)
+                        {
+                            <tr>
+                                <td>@dep.DepartamentoId</td>
+                                <td>@dep.Nombre</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary seleccionar-departamento"
+                                            data-id="@dep.DepartamentoId"
+                                            data-nombre="@dep.Nombre">
+                                        Seleccionar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).on('click', '.seleccionar-departamento', function () {
+        var departamentoId = $(this).data('id');
+        var departamentoNombre = $(this).data('nombre');
+
+        $('#departamento').val(departamentoNombre);
+        $('#departamentoId').val(departamentoId);
+
+        $('#departamentoModal').modal('hide');
+    });
+</script>

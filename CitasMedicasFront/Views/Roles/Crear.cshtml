@@ -1,0 +1,29 @@
+﻿@model CitasMedicasFront.Models.Rol
+@{
+    ViewBag.Title = "Crear Rol";
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Layout común
+}
+
+<h2>Crear Nuevo Rol de usuario</h2>
+
+@using (Html.BeginForm("Guardar", "Roles", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" name="Nombre" id="nombre" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="Descripcion">Descripcion</label>
+        <input type="text" name="Descripcion" id="descripcion" class="form-control" required />
+    </div>
+    <input type="hidden" name="FechaRegistro" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
+
+
+    <button type="submit" class="btn btn-outline-success">Guardar</button>
+}
+
+<hr />
+<a href="@Url.Action("Index", "Departamentos")" class="btn btn-outline-secondary">Volver a la lista</a>
