@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Newtonsoft.Json;
 using CitasMedicasFront.Models;
 using System;
+using CitasMedicasFront.Helpers;
 using System.Linq;
 
 namespace CitasMedicasFront.Controllers
@@ -13,6 +14,7 @@ namespace CitasMedicasFront.Controllers
     public class PersonalController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly CatalogosService _catalogosService = new CatalogosService();
 
         public PersonalController()
         {
@@ -21,7 +23,7 @@ namespace CitasMedicasFront.Controllers
                 ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
             });
 
-            _httpClient.BaseAddress = new Uri("https://localhost:44323/api/Personal");
+            _httpClient.BaseAddress = new Uri(ApiUrls.Personal);
         }
 
         // GET: Personal
@@ -36,14 +38,9 @@ namespace CitasMedicasFront.Controllers
         // GET: Personal/Crear
         public async Task<ActionResult> Crear()
         {
-            // Definir la URL absoluta para la API de departamentos
-            string apiUrlDepartamentos = "https://localhost:44323/api/Departamentos"; // Reemplaza con la URL correcta de tu API
 
-            // Obtener la lista de departamentos desde la API
-            var response = await _httpClient.GetStringAsync(apiUrlDepartamentos);
-            var departamentos = JsonConvert.DeserializeObject<List<Departamento>>(response);
+            var departamentos = await _catalogosService.ObtenerDepartamentosAsync();
 
-            // Pasar la lista de departamentos a la vista
             ViewBag.Departamentos = departamentos;
 
             return View(new Personal());
@@ -97,24 +94,13 @@ namespace CitasMedicasFront.Controllers
 
             if (personal == null)
             {
-                return HttpNotFound();  // Si no se encuentra el registro, muestra un error 404
+                return HttpNotFound();  
             }
 
-            // Obtener la lista completa de departamentos (se debería obtener solo el nombre para el id del departamento)
-            var departamentoResponse = await _httpClient.GetStringAsync($"https://localhost:44323/api/Departamentos");
-            var departamentos = JsonConvert.DeserializeObject<List<Departamento>>(departamentoResponse);
+            await AsignarNombreDepartamentoAsync(personal.DepartamentoId);
 
-            // Asegúrate de que la lista de departamentos no sea null
-            ViewBag.Departamentos = departamentos ?? new List<Departamento>();
 
-            // Obtener el nombre del departamento a través del DepartamentoId
-            var departamento = departamentos.FirstOrDefault(d => d.DepartamentoId == personal.DepartamentoId);
-            string departamentoNombre = departamento?.Nombre ?? "Desconocido";  // Si no se encuentra, devuelve "Desconocido"
-
-            // Pasar el nombre del departamento a la vista
-            ViewBag.DepartamentoNombre = departamentoNombre;
-
-            return View(personal);  // Devuelve la vista con los datos del personal a editar
+            return View(personal);  
         }
 
         public async Task<ActionResult> Actualizar(Personal personal)
@@ -149,21 +135,15 @@ namespace CitasMedicasFront.Controllers
             return View("Error");
         }
 
+        private async Task AsignarNombreDepartamentoAsync(int departamentoId)
+        {
+            var departamentos = await _catalogosService.ObtenerDepartamentosAsync();
 
-        //// POST: Personal/Eliminar
-        //[HttpPost, ActionName("Eliminar")]
-        //public async Task<ActionResult> ConfirmarEliminar(int id)
-        //{
-        //    var response = await _httpClient.DeleteAsync($"?id={id}");
 
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        return RedirectToAction("Index");  // Redirige a la lista de personal si la eliminación es exitosa
-        //    }
-
-        //    return View("Error");  // Si ocurre un error, muestra una página de error
-        //}
-
+            var departamento = departamentos.FirstOrDefault(d => d.DepartamentoId == departamentoId);
+            string departamentoNombre = departamento?.Nombre ?? "Desconocido";
+            ViewBag.DepartamentoNombre = departamentoNombre;
+        }
 
 
     }

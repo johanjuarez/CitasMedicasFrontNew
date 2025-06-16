@@ -18,5 +18,6 @@ namespace CitasMedicasFront.Models
 
         // Relación con la tabla Personal
         public virtual Personal Personal { get; set; }
+
     }
 }

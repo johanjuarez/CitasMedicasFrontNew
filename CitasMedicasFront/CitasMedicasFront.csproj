@@ -103,6 +103,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -180,6 +181,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Context\DbContextLocal.cs" />
     <Compile Include="Controllers\CitasController.cs" />
+    <Compile Include="Controllers\ConfiguracionController.cs" />
     <Compile Include="Controllers\ConsultoriosController.cs" />
     <Compile Include="Controllers\DepartamentosController.cs" />
     <Compile Include="Controllers\ForumController.cs" />
@@ -189,19 +191,28 @@
     <Compile Include="Controllers\PacientesController.cs" />
     <Compile Include="Controllers\PersonalController.cs" />
     <Compile Include="Controllers\PruebasController.cs" />
+    <Compile Include="Controllers\RecepcionistasController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\UsuariosController.cs" />
+    <Compile Include="Filters\SessionCheckAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ApiUrls.cs" />
+    <Compile Include="Helpers\CatalogosService.cs" />
+    <Compile Include="Helpers\HttpClientProvider.cs" />
     <Compile Include="Mapper\ForumMap.cs" />
     <Compile Include="Models\Citas.cs" />
+    <Compile Include="Models\CitaViewModel.cs" />
     <Compile Include="Models\Consultorios.cs" />
     <Compile Include="Models\Departamentos.cs" />
+    <Compile Include="Models\DTOS\UsuarioPersonalDTO.cs" />
+    <Compile Include="Models\EstatusCita.cs" />
     <Compile Include="Models\Forum.cs" />
     <Compile Include="Models\Medicos.cs" />
     <Compile Include="Models\Pacientes.cs" />
     <Compile Include="Models\Personal.cs" />
+    <Compile Include="Models\Responses\LoginResponse.cs" />
     <Compile Include="Models\Roles.cs" />
     <Compile Include="Models\Usuarios.cs" />
     <Compile Include="Models\UsuarioLogin.cs" />
@@ -2115,9 +2126,15 @@
     <Content Include="Views\Medicos\Editar.cshtml" />
     <Content Include="Views\Citas\Index.cshtml" />
     <Content Include="Views\Citas\Crear.cshtml" />
+    <Content Include="Views\Usuarios\Editar.cshtml" />
+    <Content Include="Views\pruebas.cshtml" />
+    <Content Include="Views\Citas\Calendario.cshtml" />
+    <Content Include="Views\Citas\CitasMedicos.cshtml" />
+    <Content Include="Views\Configuracion\Perfil.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="ImagenesUsuarios\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

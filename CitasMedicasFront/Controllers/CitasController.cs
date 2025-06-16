@@ -1,12 +1,11 @@
-﻿using CitasMedicasFront.Models;
+﻿using CitasMedicasFront.Helpers;
+using CitasMedicasFront.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace CitasMedicasFront.Controllers
@@ -14,6 +13,8 @@ namespace CitasMedicasFront.Controllers
     public class CitasController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly CatalogosService _catalogosService = new CatalogosService();
+
         public CitasController()
         {
             _httpClient = new HttpClient(new HttpClientHandler
@@ -21,40 +22,53 @@ namespace CitasMedicasFront.Controllers
                 ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
             });
 
-            _httpClient.BaseAddress = new Uri("https://localhost:44323/api/Citas");
+            _httpClient.BaseAddress = new Uri(ApiUrls.Citas); 
         }
+
         public async Task<ActionResult> Index()
         {
-            var response = await _httpClient.GetStringAsync(""); // Obtén todas las citas
+            var response = await _httpClient.GetStringAsync(""); // Ya que BaseAddress contiene /api/Citas/
             var citas = JsonConvert.DeserializeObject<List<Cita>>(response);
-
-            return View(citas);  // Devuelve la vista con los pacientes
+            return View(citas);
         }
+
+        public async Task<ActionResult> CitasMedicos()
+        {
+            int usuarioId = (int)Session["UserId"];
+
+            try
+            {
+                var response = await _httpClient.GetAsync($"Medico/{usuarioId}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    ViewBag.Error = "No se pudieron obtener las citas.";
+                    return View(new List<Cita>());
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var citas = JsonConvert.DeserializeObject<List<Cita>>(json);
+
+                return View(citas);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Error al conectar con el servidor: " + ex.Message;
+                return View(new List<Cita>());
+            }
+        }
+
         public async Task<ActionResult> Crear()
         {
-            // Definir las URLs de las APIs
-            string apiPacientes = "https://localhost:44323/api/Pacientes";
-            string apiMedicos = "https://localhost:44323/api/Medicos";
-            string apiConsultorios = "https://localhost:44323/api/Consultorios"; // URL para consultorios
+            var pacientes = await _catalogosService.ObtenerPacientesAsync();
+            var medicos = await _catalogosService.ObtenerMedicosAsync();
+            var consultorios = await _catalogosService.ObtenerConsultoriosAsync();
+            var estatusCita = await _catalogosService.ObtenerEstatusCitaAsync();
 
-            // Realizar las solicitudes de forma concurrente
-            var responsePacientesTask = _httpClient.GetStringAsync(apiPacientes);
-            var responseMedicosTask = _httpClient.GetStringAsync(apiMedicos);
-            var responseConsultoriosTask = _httpClient.GetStringAsync(apiConsultorios); // Solicitud para consultorios
-
-            // Esperar las respuestas de todas las APIs
-            await Task.WhenAll(responsePacientesTask, responseMedicosTask, responseConsultoriosTask);
-
-            // Deserializar los resultados
-            var pacientes = JsonConvert.DeserializeObject<List<Paciente>>(responsePacientesTask.Result);
-            var medicos = JsonConvert.DeserializeObject<List<Medico>>(responseMedicosTask.Result);
-            var consultorios = JsonConvert.DeserializeObject<List<Consultorio>>(responseConsultoriosTask.Result); // Deserializar los consultorios
-
-            // Pasar los datos a la vista
             ViewBag.Paciente = pacientes;
             ViewBag.Medico = medicos;
-            ViewBag.Consultorio = consultorios; // Pasar consultorios a la vista
-
+            ViewBag.Consultorio = consultorios;
+            ViewBag.EstatusCita = estatusCita;
 
             return View(new Cita());
         }
@@ -69,28 +83,27 @@ namespace CitasMedicasFront.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Index");  // Redirige a la lista de personal si la creación es exitosa
+                    return RedirectToAction("Index");
                 }
 
-                return View("Error");  // Si ocurre un error, muestra una página de error
+                return View("Error");
             }
 
-            return View(cita);  // Si el modelo no es válido, permanece en la vista de Crear
+            return View(cita);
         }
 
         public async Task<ActionResult> Guardar(Cita cita)
         {
-            if (ModelState.IsValid)  // Verifica si el modelo es válido
+            if (ModelState.IsValid)
             {
-
                 var content = new StringContent(JsonConvert.SerializeObject(cita), Encoding.UTF8, "application/json");
-                // Enviar los datos del departamento a la API para ser guardados en la base de datos
                 var response = await _httpClient.PostAsync("", content);
-                if (response.IsSuccessStatusCode)  // Si la creación fue exitosa
+
+                if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Index");  // Redirige a la lista de departamentos
+                    return RedirectToAction("Index");
                 }
-                return View("Error");  // Si ocurre un error, muestra una página de error
+                return View("Error");
             }
             return View(cita);
         }
@@ -105,6 +118,11 @@ namespace CitasMedicasFront.Controllers
             }
 
             return View("Error");
+        }
+
+        public ActionResult Calendario()
+        {
+            return View();
         }
     }
 }

@@ -1,46 +1,69 @@
-﻿@{
+﻿@model IEnumerable<CitasMedicasFront.Models.Departamento>
+
+@{
     ViewBag.Title = "Departamentos";
-    Layout = "~/Views/Shared/_Layout.cshtml";  // Layout común
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Gestión de Departamentos</h2>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="fas fa-building text-primary"></i> Gestión de Departamentos</h2>
+        <a href="@Url.Action("Crear", "Departamentos")" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Nuevo Departamento
+        </a>
+    </div>
 
-<!-- Enlace para agregar nuevo paciente -->
-<a href="@Url.Action("Crear", "Departamentos")" class="btn btn-outline-success">Agregar Nuevo Departamento</a>
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="departamentosTable" class="table table-striped table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th><i class="fas fa-tag"></i> Nombre</th>
+                            <th><i class="fas fa-info-circle"></i> Descripción</th>
+                            <th><i class="fas fa-cogs"></i> Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var departamento in Model)
+                        {
+                            <tr>
+                                <td>@departamento.Nombre</td>
+                                <td>@departamento.Descripcion</td>
+                                <td>
+                                    <a href="@Url.Action("Editar", "Departamentos", new { id = departamento.DepartamentoId })" class="btn btn-warning btn-sm" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="@Url.Action("Eliminar", "Departamentos", new { id = departamento.DepartamentoId })" class="btn btn-danger btn-sm" title="Eliminar">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-<table id="pacientesTable" class="display table table-striped">
-    <thead>
-        <tr>
-            @*<th>Id</th>*@
-            <th>Nombre</th>
-            <th>Descripcion</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Aquí recorres directamente la lista de pacientes que está en el modelo -->
-        @foreach (var Departamento in Model)
-        {
-            <tr>
-                @*<td>@Departamento.DepartamentoId</td>*@
-                <td>@Departamento.Nombre</td>
-                <td>@Departamento.Descripcion</td>
-                <td>
-                    <a href="@Url.Action("Editar", "Departamentos", new { id = Departamento.DepartamentoId })" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="@Url.Action("Eliminar", "Departamentos", new { id = Departamento.DepartamentoId })" class="btn btn-danger btn-sm">Eliminar</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Inicialización de DataTables para habilitar paginación -->
+<!-- DataTables JS + CSS -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
+
+<!-- Font Awesome (por si no está en el layout) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <script>
     $(document).ready(function () {
-        $('#pacientesTable').DataTable({
-            "pageLength": 5, // Número de registros por página
-            "language": {
-                "url": "https://cdn.datatables.net/plug-ins/1.11.5/i18n/Spanish.json" // Idioma en español
+        $('#departamentosTable').DataTable({
+            pageLength: 5,
+            responsive: true,
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.11.5/i18n/Spanish.json"
             }
         });
     });

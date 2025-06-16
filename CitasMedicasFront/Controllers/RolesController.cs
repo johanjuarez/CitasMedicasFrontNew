@@ -1,13 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using CitasMedicasFront.Models;
 using System.Text;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using CitasMedicasFront.Helpers; 
+using CitasMedicasFront.Models;
 
 namespace CitasMedicasFront.Controllers
 {
@@ -21,7 +20,7 @@ namespace CitasMedicasFront.Controllers
             {
                 ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
             });
-            _httpClient.BaseAddress = new Uri("https://localhost:44323/api/Roles");
+            _httpClient.BaseAddress = new Uri(ApiUrls.Roles); 
         }
 
         public async Task<ActionResult> Index()
@@ -35,6 +34,7 @@ namespace CitasMedicasFront.Controllers
         {
             return View(new Rol());
         }
+
         public async Task<ActionResult> Guardar(Rol rol)
         {
             if (ModelState.IsValid)
@@ -49,13 +49,14 @@ namespace CitasMedicasFront.Controllers
             }
             return View(rol);
         }
+
         public async Task<ActionResult> Editar(int id)
         {
             var response = await _httpClient.GetStringAsync($"?id={id}");
             var rol = JsonConvert.DeserializeObject<Rol>(response);
             if (rol == null)
             {
-                return HttpNotFound();  // Si no se encuentra el Rol, se devuelve un error 404
+                return HttpNotFound();  
             }
             return View(rol);
         }
@@ -87,5 +88,4 @@ namespace CitasMedicasFront.Controllers
             return View("Error");
         }
     }
-
 }

@@ -3,44 +3,92 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Crear Usuario</title>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <!-- Font Awesome para iconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
 </head>
 <body>
 
     <div class="container mt-4">
-        <h2 class="text-center">Crear Nuevo Usuario</h2>
+        <h2 class="text-center mb-4">Crear Nuevo Usuario</h2>
 
         <div class="card shadow-lg p-4">
-            @using (Html.BeginForm("Guardar", "Usuarios", FormMethod.Post))
+            @*@using (Html.BeginForm("Guardar", "Usuarios", FormMethod.Post))*@
+            @using (Html.BeginForm("Guardar", "Usuarios", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
                 @Html.AntiForgeryToken()
 
+                <!-- Miembro a crear usuario con ícono y modal -->
+                <div class="form-group mb-3">
+                    <label for="personal">Miembro a crear usuario</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary text-white"><i class="fa-solid fa-id-badge"></i></span>
+                        <input type="text" class="form-control" id="personal" readonly />
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#personalModal">
+                            <i class="fa-solid fa-magnifying-glass"></i> Seleccionar
+                        </button>
+                    </div>
+                    <input type="hidden" name="PersonalId" id="personalId" />
+                </div>
+
+                <!-- Usuario con ícono -->
                 <div class="mb-3">
                     <label for="usuario" class="form-label">Usuario</label>
-                    <input type="text" name="Usuario" id="usuario" class="form-control" required />
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary text-white"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" name="Usuario" id="usuario" class="form-control" required />
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="folio" class="form-label">Folio</label>
-                    <input type="text" name="Folio" id="folio" class="form-control" required />
-                </div>
 
+
+                <!-- Contraseña con ícono -->
                 <div class="mb-3">
                     <label for="contraseña" class="form-label">Contraseña</label>
-                    <input type="password" name="Contraseña" id="contraseña" class="form-control" required />
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary text-white"><i class="fa-solid fa-lock"></i></span>
+                        <input type="password" name="Contraseña" id="contraseña" class="form-control" required />
+                    </div>
                 </div>
 
+                <!-- Rol de usuario con ícono y modal -->
+                <div class="form-group mb-3">
+                    <label for="rol">Rol de Usuario</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary text-white"><i class="fa-solid fa-user-tag"></i></span>
+                        <input type="text" class="form-control" id="rol" readonly />
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#RolModal">
+                            <i class="fa-solid fa-magnifying-glass"></i> Seleccionar
+                        </button>
+                    </div>
+                    <input type="hidden" name="RolId" id="rolId" />
+                </div>
+
+
+                <input type="hidden" name="FechaRegistro" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
+
+                <!-- Imagen del usuario -->
                 <div class="mb-3">
-                    <label for="rolId" class="form-label">Rol</label>
-                    <input type="number" name="RolId" id="rolId" class="form-control" required />
+                    <label for="ImagenFile" class="form-label">Foto de perfil</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary text-white"><i class="fa-solid fa-image"></i></span>
+                        <input type="file" name="FotoFile" id="FotoFile" class="form-control" accept="/*" />
+                    </div>
                 </div>
 
-                <button type="submit" class="btn btn-success w-100">Guardar</button>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar
+                </button>
             }
         </div>
 
@@ -49,8 +97,141 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Modales -->
+    <!-- Modal selección personal -->
+    <div class="modal fade" id="personalModal" tabindex="-1" aria-labelledby="personalModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="personalModalLabel">Seleccionar Miembro</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <table id="tablaPersonal" class="table table-bordered table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var personal in ViewBag.Personal as List<CitasMedicasFront.Models.Personal>)
+                            {
+                                <tr>
+                                    <td>@personal.PersonalId</td>
+                                    <td>@personal.Nombre @personal.ApellidoPaterno @personal.ApellidoMaterno</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-primary seleccionar-personal"
+                                                data-id="@personal.PersonalId"
+                                                data-nombre="@personal.Nombre">
+                                            <i class="fa-solid fa-check"></i> Seleccionar
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal selección rol -->
+    <div class="modal fade" id="RolModal" tabindex="-1" aria-labelledby="RolModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="RolModalLabel">Seleccionar Rol</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <table id="tablaRol" class="table table-bordered table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var rol in ViewBag.Roles as List<CitasMedicasFront.Models.Rol>)
+                            {
+                                <tr>
+                                    <td>@rol.RolId</td>
+                                    <td>@rol.Nombre</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-primary seleccionar-rol"
+                                                data-id="@rol.RolId"
+                                                data-nombre="@rol.Nombre">
+                                            <i class="fa-solid fa-check"></i> Seleccionar
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
+
+<!-- Bootstrap JS bundle (con Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#tablaPersonal').DataTable({
+            language: {
+                url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            }
+        });
+
+        $('#tablaRol').DataTable({
+            language: {
+                url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            }
+        });
+    });
+</script>
+<script>
+    $(document).on('click', '.seleccionar-personal', function () {
+        var personalId = $(this).data('id');
+        var nombrePersonal = $(this).data('nombre');
+
+        $('#personal').val(nombrePersonal);
+        $('#personalId').val(personalId);
+
+        // Cerrar modal usando jQuery y Bootstrap tradicional
+        $('#personalModal').modal('hide');
+    });
+
+</script>
+
+<script>
+
+    $(document).on('click', '.seleccionar-rol', function () {
+        var rolId = $(this).data('id');
+        var rol = $(this).data('nombre');
+
+        $('#rol').val(rol);
+        $('#rolId').val(rolId);
+
+        // Cerrar modal usando jQuery y Bootstrap tradicional
+        $('#RolModal').modal('hide');
+    });
+</script>
+
+
+

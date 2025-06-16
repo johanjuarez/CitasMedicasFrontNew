@@ -124,7 +124,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <table class="table table-bordered">
+                <table id="tablaDepartamentos" class="table table-bordered">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -164,5 +164,10 @@
         $('#departamentoId').val(departamentoId);
 
         $('#departamentoModal').modal('hide');
+    });
+
+    $(document).ready(function () {
+        $('#tablaDepartamentos').DataTable();
+
     });
 </script>

@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using CitasMedicasFront.Filters;
+using System.Web;
 using System.Web.Mvc;
 
 namespace CitasMedicasFront
@@ -8,6 +9,7 @@ namespace CitasMedicasFront
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            filters.Add(new SessionCheckAttribute());
         }
     }
 }

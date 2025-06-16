@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Newtonsoft.Json;
 using CitasMedicasFront.Models;
+using CitasMedicasFront.Models.Responses;
+using System.Web;
+using System.IO;
 
 namespace CitasMedicasFront.Controllers
 {
@@ -20,7 +23,8 @@ namespace CitasMedicasFront.Controllers
                 ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
             });
 
-            _httpClient.BaseAddress = new Uri("https://localhost:44323/api/Auth");  // URL de tu API
+            _httpClient.BaseAddress = new Uri("https://localhost:44323/api/Auth"); 
+
         }
 
         // GET: Auth/Login
@@ -43,15 +47,21 @@ namespace CitasMedicasFront.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                var token = await response.Content.ReadAsStringAsync();
-                Session["UserToken"] = token;  // Guarda el token en sesión
-                return RedirectToAction("Index", "Home");  // Redirige al inicio
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var userData = JsonConvert.DeserializeObject<LoginResponse>(jsonResponse);
+
+                // Guardamos los datos del usuario en sesión
+                Session["UserId"] = userData.IdUsuario;
+                Session["UserName"] = userData.Nombre;
+                Session["RolId"] = userData.RolId;
+                return RedirectToAction("Index", "Home");
             }
 
             ViewBag.Error = "Usuario o contraseña incorrectos";  // Muestra error
             return View();
         }
 
+     
         // GET: Auth/Logout
         public ActionResult Logout()
         {

@@ -5,7 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Crear Nueva Cita</h2>
+<!-- Título principal con ícono -->
+<h2 class="mb-4"><i class="fas fa-calendar-plus text-primary"></i> Crear Nueva Cita</h2>
 
 @using (Html.BeginForm("Guardar", "Citas", FormMethod.Post))
 {
@@ -13,27 +14,26 @@
 
     <!-- Paciente con Modal -->
     <div class="form-group">
-        <label for="personal">Paciente</label>
+        <label for="paciente" class="font-weight-bold">Paciente</label>
         <div class="input-group">
-            <input type="text" class="form-control" id="paciente" readonly />
+            <input type="text" class="form-control" id="paciente" placeholder="Seleccione un paciente" readonly />
             <div class="input-group-append">
-                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#pacienteModal">
-                    <i class="fa fa-search"></i> Seleccionar
+                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#pacienteModal" title="Seleccionar paciente">
+                    <i class="fas fa-search"></i> Seleccionar
                 </button>
             </div>
         </div>
         <input type="hidden" name="PacienteId" id="pacienteId" />
     </div>
 
-
-    <!-- Medico con Modal -->
+    <!-- Médico con Modal -->
     <div class="form-group">
-        <label for="personal">Medico</label>
+        <label for="medico" class="font-weight-bold">Médico</label>
         <div class="input-group">
-            <input type="text" class="form-control" id="medico" readonly />
+            <input type="text" class="form-control" id="medico" placeholder="Seleccione un médico" readonly />
             <div class="input-group-append">
-                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#medicoModal">
-                    <i class="fa fa-search"></i> Seleccionar
+                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#medicoModal" title="Seleccionar médico">
+                    <i class="fas fa-search"></i> Seleccionar
                 </button>
             </div>
         </div>
@@ -42,76 +42,81 @@
 
     <!-- Consultorio con Modal -->
     <div class="form-group">
-        <label for="personal">Consultorio</label>
+        <label for="consultorio" class="font-weight-bold">Consultorio</label>
         <div class="input-group">
-            <input type="text" class="form-control" id="consultorio" readonly />
+            <input type="text" class="form-control" id="consultorio" placeholder="Seleccione un consultorio" readonly />
             <div class="input-group-append">
-                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#consultorioModal">
-                    <i class="fa fa-search"></i> Seleccionar
+                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#consultorioModal" title="Seleccionar consultorio">
+                    <i class="fas fa-search"></i> Seleccionar
                 </button>
             </div>
         </div>
         <input type="hidden" name="ConsultorioId" id="consultorioId" />
     </div>
 
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="fechaHora" class="font-weight-bold">Fecha y Hora de registro</label>
+            <input type="datetime-local" name="FechaHora" id="fechaHora" class="form-control" required />
+        </div>
+
+        <div class="form-group col-md-6">
+            <label for="fechaHoraFin" class="font-weight-bold">Fecha y Hora fin de cita</label>
+            <input type="datetime-local" name="FechaHoraFin" id="fechaHoraFin" class="form-control" required />
+        </div>
+    </div>
+
+    <!-- Estatus con Modal -->
     <div class="form-group">
-        <label for="fechaHora">Fecha y Hora de registro</label>
-        <input type="datetime-local" name="FechaHora" id="fechaHora" class="form-control" required />
+        <label for="medico" class="font-weight-bold">Estatus de la cita</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="estatusCita" placeholder="Seleccione un estatus" readonly />
+            <div class="input-group-append">
+                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#estatusCitaModal" title="Seleccionar médico">
+                    <i class="fas fa-search"></i> Seleccionar
+                </button>
+            </div>
+        </div>
+        <input type="hidden" name="EstatusId" id="estatusId" />
     </div>
 
     <div class="form-group">
-        <label for="estado">Estado cita</label>
-        <select name="Estado" id="estado" class="form-control" required>
-            <option value="Selecciona una opcion....">Selecciona una opcion....</option>
-            <option value="confirmada">Confirmada</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="enconsulta">En consulta</option>
-            <option value="finalizada">Finalizada</option>
-            <option value="cancelada">Cancelada</option>
-        </select>
-    </div>
-
-
-    <div class="form-group">
-        <label for="cedulaprofesional">Motivo de cita</label>
-        <input type="text" name="Motivo" id="motivo" class="form-control" required />
+        <label for="motivo" class="font-weight-bold">Motivo de cita</label>
+        <input type="text" name="Motivo" id="motivo" class="form-control" placeholder="Ingrese el motivo de la cita" required />
     </div>
 
     <div class="form-group">
-        <label for="notascita">Notas de cita</label>
-        <input type="text" name="Notas" id="notas" class="form-control" readonly/>
+        <label for="notas" class="font-weight-bold">Notas de cita</label>
+        <input type="text" name="Notas" id="notas" class="form-control" placeholder="Notas adicionales (solo lectura)" readonly />
     </div>
 
-    <div class="form-group">
-        <label for="fechaRegistro">Fecha de registro</label>
-        <input type="date" name="FechaRegistro" id="fechaRegistro" class="form-control" required />
-    </div>
-
+    <!-- Campos ocultos para fechas de registro y modificación -->
+    <input type="hidden" name="FechaRegistro" id="fechaRegistro" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
     <input type="hidden" name="FechaUltimaModificacion" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
 
-    <button type="submit" class="btn btn-outline-success">Guardar</button>
+    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-save"></i> Guardar</button>
 }
 
 <hr />
-<a href="@Url.Action("Index", "Personal")" class="btn btn-outline-secondary">Volver a la lista</a>
+<a href="@Url.Action("Index", "Personal")" class="btn btn-secondary btn-block"><i class="fas fa-arrow-left"></i> Volver a la lista</a>
 
-<!-- Modal de selección de personal -->
-<div class="modal fade" id="pacienteModal" tabindex="-1" role="dialog" aria-labelledby="departamentoModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- Modal Paciente -->
+<div class="modal fade" id="pacienteModal" tabindex="-1" role="dialog" aria-labelledby="pacienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="departamentoModalLabel">Seleccionar Paciente</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-user"></i> Seleccionar Paciente</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <table class="table table-bordered">
-                    <thead>
+                <table id="tablaPacientes" class="table table-hover table-bordered table-striped">
+                    <thead class="thead-light">
                         <tr>
                             <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Acciones</th>
+                            <th>Nombre Completo</th>
+                            <th style="width: 120px;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -119,12 +124,12 @@
                         {
                             <tr>
                                 <td>@paciente.PacienteId</td>
-                                <td>@paciente.Nombre  @paciente.ApellidoPaterno  @paciente.ApellidoMaterno</td>
+                                <td>@paciente.Nombre @paciente.ApellidoPaterno @paciente.ApellidoMaterno</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary seleccionar-paciente"
+                                    <button type="button" class="btn btn-sm btn-primary seleccionar-paciente"
                                             data-id="@paciente.PacienteId"
-                                            data-nombre="@paciente.Nombre">
-                                        Seleccionar
+                                            data-nombre="@paciente.Nombre @paciente.ApellidoPaterno @paciente.ApellidoMaterno">
+                                        <i class="fas fa-check"></i> Seleccionar
                                     </button>
                                 </td>
                             </tr>
@@ -136,23 +141,23 @@
     </div>
 </div>
 
-<!-- Modal de selección de medico -->
-<div class="modal fade" id="medicoModal" tabindex="-1" role="dialog" aria-labelledby="departamentoModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- Modal Médico -->
+<div class="modal fade" id="medicoModal" tabindex="-1" role="dialog" aria-labelledby="medicoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="departamentoModalLabel">Seleccionar Medico</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-user-md"></i> Seleccionar Médico</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <table class="table table-bordered">
-                    <thead>
+                <table id="tablaMedicos" class="table table-hover table-bordered table-striped">
+                    <thead class="thead-light">
                         <tr>
                             <th>ID</th>
                             <th>Especialidad</th>
-                            <th>Nombre</th>
+                            <th>Nombre Completo</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -164,41 +169,38 @@
                                 <td>@medico.Especialidad</td>
                                 <td>@medico.Personal.Nombre @medico.Personal.ApellidoPaterno @medico.Personal.ApellidoMaterno</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary seleccionar-medico"
+                                    <button type="button" class="btn btn-sm btn-primary seleccionar-medico"
                                             data-id="@medico.MedicoId"
-                                            data-nombre="@medico.Personal.Nombre">
-                                        Seleccionar
+                                            data-nombre="@medico.Personal.Nombre @medico.Personal.ApellidoPaterno @medico.Personal.ApellidoMaterno">
+                                        <i class="fas fa-check"></i> Seleccionar
                                     </button>
                                 </td>
                             </tr>
                         }
                     </tbody>
-
                 </table>
             </div>
         </div>
     </div>
 </div>
 
-
-
-<!-- Modal de selección de consuotorio -->
-<div class="modal fade" id="consultorioModal" tabindex="-1" role="dialog" aria-labelledby="departamentoModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- Modal Consultorio -->
+<div class="modal fade" id="consultorioModal" tabindex="-1" role="dialog" aria-labelledby="consultorioModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="departamentoModalLabel">Seleccionar consultorio</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-clinic-medical"></i> Seleccionar Consultorio</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <table class="table table-bordered">
-                    <thead>
+                <table id="tablaConsultorios" class="table table-hover table-bordered table-striped">
+                    <thead class="thead-light">
                         <tr>
                             <th>Nombre</th>
                             <th>Especialidad</th>
-                            <th>Acciones</th>
+                            <th style="width: 120px;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -208,55 +210,115 @@
                                 <td>@consultorio.Nombre</td>
                                 <td>@consultorio.Especialidad</td>
                                 <td>
-                                    <button type="button" class="btn btn-primary seleccionar-consultorio"
+                                    <button type="button" class="btn btn-sm btn-primary seleccionar-consultorio"
                                             data-id="@consultorio.ConsultorioId"
                                             data-nombre="@consultorio.Nombre">
-                                        Seleccionar
+                                        <i class="fas fa-check"></i> Seleccionar
                                     </button>
                                 </td>
                             </tr>
                         }
                     </tbody>
-
                 </table>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Estatus de cita -->
+<div class="modal fade" id="estatusCitaModal" tabindex="-1" role="dialog" aria-labelledby="estatusCitaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-clinic-medical"></i> Seleccionar Consultorio</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table id="tablaEstatus" class="table table-hover table-bordered table-striped">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Nombre</th>
+                            <th style="width: 120px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var estatusCita in ViewBag.EstatusCita as List<CitasMedicasFront.Models.EstatusCita>)
+                        {
+                            <tr>
+                                <td>@estatusCita.NombreMostrar</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary seleccionar-estatus"
+                                            data-id="@estatusCita.EstatusId"
+                                            data-nombre="@estatusCita.NombreMostrar">
+                                        <i class="fas fa-check"></i> Seleccionar
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Bundle (incluye Popper.js y evita conflictos con modales) -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- DataTables -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<!-- jQuery (siempre primero) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- Inicialización de DataTables -->
 <script>
+    $(document).ready(function () {
+        $('#tablaPacientes').DataTable();
+        $('#tablaMedicos').DataTable();
+        $('#tablaConsultorios').DataTable();
+        $('#tablaEstatus').DataTable();
+    });
+</script>
+
+<!-- Delegación de eventos para selección en modales -->
+<script>
+    // Paciente
     $(document).on('click', '.seleccionar-paciente', function () {
-        var pacienteId = $(this).data('id');
-        var pacienteNombre = $(this).data('nombre');
-
-        $('#paciente').val(pacienteNombre);
-        $('#pacienteId').val(pacienteId);
-
+        var id = $(this).data('id');
+        var nombre = $(this).data('nombre');
+        $('#pacienteId').val(id);
+        $('#paciente').val(nombre);
         $('#pacienteModal').modal('hide');
     });
-</script>
 
-<script>
+    // Médico
     $(document).on('click', '.seleccionar-medico', function () {
-        var medicoId = $(this).data('id');
-        var medicoNombre = $(this).data('nombre');
-
-        $('#medico').val(medicoNombre);
-        $('#medicoId').val(medicoId);
-
+        var id = $(this).data('id');
+        var nombre = $(this).data('nombre');
+        $('#medicoId').val(id);
+        $('#medico').val(nombre);
         $('#medicoModal').modal('hide');
     });
-</script>
 
-<script>
+    // Consultorio
     $(document).on('click', '.seleccionar-consultorio', function () {
-        var consultorioId = $(this).data('id');
-        var consultorioNombre = $(this).data('nombre');
-
-        $('#consultorio').val(consultorioNombre);
-        $('#consultorioId').val(consultorioId);
-
+        var id = $(this).data('id');
+        var nombre = $(this).data('nombre');
+        $('#consultorioId').val(id);
+        $('#consultorio').val(nombre);
         $('#consultorioModal').modal('hide');
     });
-</script>
 
+    // Estatus
+    $(document).on('click', '.seleccionar-estatus', function () {
+        var id = $(this).data('id');
+        var nombre = $(this).data('nombre');
+        $('#estatusId').val(id);
+        $('#estatusCita').val(nombre);
+        $('#estatusCitaModal').modal('hide');
+    });
+</script>

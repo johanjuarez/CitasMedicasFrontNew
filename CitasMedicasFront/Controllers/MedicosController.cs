@@ -1,4 +1,5 @@
-﻿using CitasMedicasFront.Models;
+﻿using CitasMedicasFront.Helpers;
+using CitasMedicasFront.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace CitasMedicasFront.Controllers
     public class MedicosController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly CatalogosService _catalogosService = new CatalogosService();
+
         public MedicosController()
         {
             _httpClient = new HttpClient(new HttpClientHandler
@@ -27,25 +30,15 @@ namespace CitasMedicasFront.Controllers
             var response = await _httpClient.GetStringAsync(""); // Obtén todos los medicos
             var medicos = JsonConvert.DeserializeObject<List<Medico>>(response);
 
-            return View(medicos);  // Devuelve la vista con los pacientes
+            return View(medicos);  // Devuelve la vista con los medicos
         }
 
         public async Task<ActionResult> Crear()
         {
-            // Definir las URLs de las APIs
-            string apiConsultorios = "https://localhost:44323/api/Consultorios";
-            string apiPersonal = "https://localhost:44323/api/Personal"; 
-
-            // Realizar ambas solicitudes de forma concurrente
-            var responseConsultoriosTask = _httpClient.GetStringAsync(apiConsultorios);
-            var responsePersonalTask = _httpClient.GetStringAsync(apiPersonal);
-
-            // Esperar las respuestas de ambas APIs
-            await Task.WhenAll(responseConsultoriosTask, responsePersonalTask);
-
+        
             // Deserializar los resultados
-            var consultorios = JsonConvert.DeserializeObject<List<Consultorio>>(responseConsultoriosTask.Result);
-            var personal = JsonConvert.DeserializeObject<List<Personal>>(responsePersonalTask.Result);
+            var consultorios = await _catalogosService.ObtenerConsultoriosAsync();
+            var personal = await _catalogosService.ObtenerPersonalAsync();
 
             // Pasar los datos a la vista
             ViewBag.Consultorios = consultorios;
@@ -103,34 +96,8 @@ namespace CitasMedicasFront.Controllers
                 return HttpNotFound();  // Si no se encuentra el registro, muestra un error 404
             }
 
-            // Obtener la lista completa de departamentos (se debería obtener solo el nombre para el id del departamento)
-            var consultorioResponse = await _httpClient.GetStringAsync($"https://localhost:44323/api/Consultorios");
-            var consultorios = JsonConvert.DeserializeObject<List<Consultorio>>(consultorioResponse);
-
-            // Asegúrate de que la lista de departamentos no sea null
-            ViewBag.Consultorios = consultorios ?? new List<Consultorio>();
-
-            // Obtener el nombre del departamento a través del DepartamentoId
-            var consultorio = consultorios.FirstOrDefault(d => d.ConsultorioId == medico.ConsultorioId);
-            string consultorioNombre = consultorio?.Nombre ?? "Desconocido";  // Si no se encuentra, devuelve "Desconocido"
-            // Pasar el nombre del departamento a la vista
-            ViewBag.ConsultorioNombre = consultorioNombre;
-
-
-
-            // Obtener la lista completa de departamentos (se debería obtener solo el nombre para el id del departamento)
-            var personalResponse = await _httpClient.GetStringAsync($"https://localhost:44323/api/Personal");
-            var personales = JsonConvert.DeserializeObject<List<Personal>>(personalResponse);
-
-            // Asegúrate de que la lista de departamentos no sea null
-            ViewBag.Personal = personales ?? new List<Personal>();
-
-            // Obtener el nombre del departamento a través del DepartamentoId
-            var personal = personales.FirstOrDefault(d => d.PersonalId == medico.PersonalId);
-            string personalNombre = personal?.Nombre ?? "Desconocido";  // Si no se encuentra, devuelve "Desconocido"
-
-            // Pasar el nombre del departamento a la vista
-            ViewBag.PersonalNombre = personalNombre;
+            await AsignarConsultorioNombreAsync(medico.ConsultorioId);  // Asigna el nombre del consultorio
+            await AsignarPersonalNombreAsync(medico.PersonalId);  // Asigna el nombre del personal
 
             return View(medico);  // Devuelve la vista con los datos del personal a editar
         }
@@ -153,6 +120,7 @@ namespace CitasMedicasFront.Controllers
             return View("Editar", medico);  // Cambia 'Editar' por el nombre correcto de la vista
         }
 
+        
         public async Task<ActionResult> Eliminar(int id)
         {
             var response = await _httpClient.DeleteAsync($"?id={id}");
@@ -163,6 +131,26 @@ namespace CitasMedicasFront.Controllers
             }
 
             return View("Error");
+        }
+
+
+        private async Task AsignarConsultorioNombreAsync(int consultorioId)
+        {
+            var consultorios = await _catalogosService.ObtenerConsultoriosAsync();
+            ViewBag.Consultorios = consultorios;
+
+
+            var consultorio = consultorios.FirstOrDefault(c => c.ConsultorioId == consultorioId);
+            ViewBag.ConsultorioNombre = consultorio?.Nombre ?? "Desconocido";
+        }
+
+        private async Task AsignarPersonalNombreAsync(int personalId)
+        {
+            var personales = await _catalogosService.ObtenerPersonalAsync();
+            ViewBag.Personal = personales;
+
+            var personal = personales.FirstOrDefault(p => p.PersonalId == personalId);
+            ViewBag.PersonalNombre = personal?.Nombre ?? "Desconocido";
         }
 
     }
