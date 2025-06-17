@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Editar Nota Médica";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Editar Nota Médica</h2>
+
+@using (Html.BeginForm("Actualizar", "NotasConsulta", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <!-- NotaId como campo oculto -->
+    <input type="hidden" id="notaId" name="NotaId" value="@Model.NotaId" />
+
+    <div class="form-group">
+        <label for="sintomas">Síntomas</label>
+        <textarea name="Sintomas" id="sintomas" class="form-control" rows="3" required>@Model.Sintomas</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="observaciones">Observaciones</label>
+        <textarea name="Observaciones" id="observaciones" class="form-control" rows="3" required>@Model.Observaciones</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="diagnostico">Diagnóstico</label>
+        <textarea name="Diagnostico" id="diagnostico" class="form-control" rows="3" required>@Model.Diagnostico</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="tratamiento">Tratamiento</label>
+        <textarea name="Tratamiento" id="tratamiento" class="form-control" rows="3" required>@Model.Tratamiento</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="medicamentos">Medicamentos</label>
+        <textarea name="Medicamentos" id="medicamentos" class="form-control" rows="3" required>@Model.Medicamentos</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-outline-success">Actualizar</button>
+}
+
+<hr />
+<a href="@Url.Action("Index", "NotasConsulta")" class="btn btn-outline-secondary">Volver a la lista</a>

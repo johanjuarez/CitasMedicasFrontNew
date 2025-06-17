@@ -13,7 +13,7 @@ namespace CitasMedicasFront.Models
         public int ConsultorioId { get; set; }
         public DateTime FechaHora { get; set; }
         public string Motivo { get; set; }
-        public string Estado { get; set; }
+        public int Estatus { get; set; } 
         public string Notas { get; set; }
         public int UsuarioRegistro { get; set; }
         public DateTime FechaRegistro { get; set; }

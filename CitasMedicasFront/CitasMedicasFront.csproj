@@ -188,6 +188,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MedicosController.cs" />
+    <Compile Include="Controllers\NotasConsultaController.cs" />
     <Compile Include="Controllers\PacientesController.cs" />
     <Compile Include="Controllers\PersonalController.cs" />
     <Compile Include="Controllers\PruebasController.cs" />
@@ -206,10 +207,12 @@
     <Compile Include="Models\CitaViewModel.cs" />
     <Compile Include="Models\Consultorios.cs" />
     <Compile Include="Models\Departamentos.cs" />
+    <Compile Include="Models\DTOS\NotaCrearDto.cs" />
     <Compile Include="Models\DTOS\UsuarioPersonalDTO.cs" />
     <Compile Include="Models\EstatusCita.cs" />
     <Compile Include="Models\Forum.cs" />
     <Compile Include="Models\Medicos.cs" />
+    <Compile Include="Models\NotasConsulta.cs" />
     <Compile Include="Models\Pacientes.cs" />
     <Compile Include="Models\Personal.cs" />
     <Compile Include="Models\Responses\LoginResponse.cs" />
@@ -2131,6 +2134,7 @@
     <Content Include="Views\Citas\Calendario.cshtml" />
     <Content Include="Views\Citas\CitasMedicos.cshtml" />
     <Content Include="Views\Configuracion\Perfil.cshtml" />
+    <Content Include="Views\NotasConsulta\Editar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -28,7 +28,15 @@
             <tr>
                 <td>@cita.FechaHora - @cita.FechaHoraFin.ToString("HH:mm tt")</td>
                 <td>@cita.Motivo</td>
-                <td>@cita.Notas</td>
+                <td>
+                    @using (Html.BeginForm("CrearNotaDesdeCita", "Citas", FormMethod.Post))
+                    {
+                        <input type="hidden" name="CitaId" value="@cita.CitaId" />
+                        <input type="hidden" name="PacienteId" value="@cita.PacienteId" />
+                        <input type="hidden" name="MedicoId" value="@cita.MedicoId" />
+                        <button type="submit" class="btn btn-link btn-sm">Ver / Crear Nota</button>
+                    }
+                </td>
                 <td>
                     <a href="#"
                        class="btn btn-info btn-sm ver-detalles"
@@ -39,7 +47,7 @@
                        data-medico="@cita.MedicoId"
                        data-consultorio="@cita.ConsultorioId"
                        data-fecha="@cita.FechaHora - @cita.FechaHoraFin.ToString("HH:mm tt")"
-                       data-estado="@cita.Estado"
+                       data-estado="@cita.Estatus"
                        data-motivo="@cita.Motivo"
                        data-notas="@cita.Notas"
                        data-usuario="@cita.UsuarioRegistro">
