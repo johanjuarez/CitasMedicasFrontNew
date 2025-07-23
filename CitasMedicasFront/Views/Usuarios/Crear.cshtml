@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+
 </head>
 <body>
 
@@ -45,20 +46,33 @@
                     <label for="usuario" class="form-label">Usuario</label>
                     <div class="input-group">
                         <span class="input-group-text bg-primary text-white"><i class="fa-solid fa-user"></i></span>
-                        <input type="text" name="Usuario" id="usuario" class="form-control" required />
+                        <input type="text" name="Usuario" id="usuario" class="form-control" minlength="10" maxlength="25" required />
                     </div>
+                    <div id="usuario-error" class="text-danger mt-1" style="display:none;"></div>
                 </div>
 
 
+                @*<div class="mb-3">
+                        <label for="contraseña" class="form-label">Contraseña</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary text-white"><i class="fa-solid fa-lock"></i></span>
+                            <input type="password" name="Contraseña" id="contraseña" class="form-control" minlength="15" maxlength="30" required />
+                        </div>
+                        <div id="contraseña-error" class="text-danger mt-1" style="display:none;"></div>
+                    </div>*@
 
-                <!-- Contraseña con ícono -->
-                <div class="mb-3">
-                    <label for="contraseña" class="form-label">Contraseña</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-primary text-white"><i class="fa-solid fa-lock"></i></span>
-                        <input type="password" name="Contraseña" id="contraseña" class="form-control" required />
-                    </div>
-                </div>
+
+        <div class="mb-3">
+            <label for="contraseña" class="form-label">Contraseña</label>
+            <div class="input-group">
+                <span class="input-group-text bg-primary text-white"><i class="fa-solid fa-lock"></i></span>
+                <input type="password" name="Contraseña" id="contraseña" class="form-control" minlength="15" maxlength="30" required />
+            </div>
+            <div id="contraseña-error" class="text-danger mt-1" style="display:none;"></div>
+            <small id="password-strength-meter" class="form-text"></small>
+        </div>
+
+
 
                 <!-- Rol de usuario con ícono y modal -->
                 <div class="form-group mb-3">
@@ -189,6 +203,90 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- pwstrength-bootstrap -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pwstrength-bootstrap/3.0.9/pwstrength-bootstrap.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/zxcvbn@4.4.2/dist/zxcvbn.js"></script>
+
+
+
+<script>
+    $('#contraseña').on('blur keyup', function () {
+        const contraseña = $(this).val().trim();
+        const tieneMayuscula = /[A-Z]/.test(contraseña);
+        const tieneEspecial = /[^a-zA-Z0-9]/.test(contraseña);
+
+        if (contraseña.length === 0) {
+            $(this).removeClass('is-invalid');
+            $('#contraseña-error').hide();
+            return; // Salimos de la función
+        }
+
+        if (contraseña.length < 12 || contraseña.length > 30) {
+            $(this).addClass('is-invalid');
+            $('#contraseña-error').text('La contraseña debe tener entre 12 y 30 caracteres.').show();
+        } else if (!tieneMayuscula) {
+            $(this).addClass('is-invalid');
+            $('#contraseña-error').text('La contraseña debe contener al menos una letra mayúscula.').show();
+        } else if (!tieneEspecial) {
+            $(this).addClass('is-invalid');
+            $('#contraseña-error').text('La contraseña debe contener al menos un carácter especial.').show();
+        } else {
+            $(this).removeClass('is-invalid');
+            $('#contraseña-error').hide();
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+
+    $('form').on('submit', function (e) {
+        const contraseña = $('#contraseña').val().trim();
+        const tieneMayuscula = /[A-Z]/.test(contraseña);
+        const tieneEspecial = /[^a-zA-Z0-9]/.test(contraseña);
+        let isValid = true;
+
+        if (contraseña.length < 12 || contraseña.length > 30) {
+            $('#contraseña').addClass('is-invalid');
+            $('#contraseña-error').text('La contraseña debe tener entre 12 y 30 caracteres.').show();
+            isValid = false;
+        } else if (!tieneMayuscula) {
+            $('#contraseña').addClass('is-invalid');
+            $('#contraseña-error').text('La contraseña debe contener al menos una letra mayúscula.').show();
+            isValid = false;
+        } else if (!tieneEspecial) {
+            $('#contraseña').addClass('is-invalid');
+            $('#contraseña-error').text('La contraseña debe contener al menos un carácter especial.').show();
+            isValid = false;
+        }
+
+        if (!isValid) {
+            e.preventDefault(); // Bloquear envío
+        }
+    });
+</script>
+
+<script>
+    $('#usuario').on('blur keyup', function () {
+        const usuario = $(this).val().trim();
+
+        if (usuario.length === 0) {
+            $(this).removeClass('is-invalid');
+            $('#usuario-error').hide();
+            return; // Salimos de la función
+        }
+
+        if (usuario.length < 10 || usuario.length > 25) {
+            $(this).addClass('is-invalid');
+            $('#usuario-error').text('El usuario debe tener entre 10 y 25 caracteres.').show();
+        } else {
+            $(this).removeClass('is-invalid');
+            $('#usuario-error').hide();
+        }
+    });
+</script>
+
 
 <script>
     $(document).ready(function () {
@@ -232,6 +330,42 @@
         $('#RolModal').modal('hide');
     });
 </script>
+<script>
+    $(document).ready(function () {
+        $('#contraseña').on('input', function () {
+            const password = $(this).val();
+            const result = zxcvbn(password);
+            const score = result.score; // Score va de 0 (muy débil) a 4 (muy fuerte)
 
+            let texto = "";
+            let color = "";
 
+            switch (score) {
+                case 0:
+                    texto = "Muy débil";
+                    color = "red";
+                    break;
+                case 1:
+                    texto = "Débil";
+                    color = "orange";
+                    break;
+                case 2:
+                    texto = "Regular";
+                    color = "gold";
+                    break;
+                case 3:
+                    texto = "Fuerte";
+                    color = "blue";
+                    break;
+                case 4:
+                    texto = "Muy fuerte";
+                    color = "green";
+                    break;
+            }
+
+            $('#password-strength-meter').text(texto).css('color', color);
+        });
+    });
+
+</script>
 
