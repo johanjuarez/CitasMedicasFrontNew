@@ -25,58 +25,51 @@ namespace CitasMedicasFront.Controllers
             });
             _httpClient.BaseAddress = new Uri(ApiUrls.NotasConsulta);
         }
-
-        //public async Task<ActionResult> Editar(int? id)
-        //{
-        //    var response = await _httpClient.GetStringAsync($"?id={id}");
-        //    var nota = JsonConvert.DeserializeObject<NotasConsulta>(response);
-        //    if (nota == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(nota);
-        //}
-        public async Task<ActionResult> Editar(int? id)
+        public ActionResult Crear(int citaId, int medicoId, int pacienteId)
         {
-            if (id == null)
+            var nota = new NotasConsulta
             {
-                return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
-            }
+                CitaId = citaId,
+                MedicoId = medicoId,
+                PacienteId = pacienteId
+            };
 
-            var response = await _httpClient.GetAsync($"/{id}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return View("Error");
-            }
-
-            var json = await response.Content.ReadAsStringAsync();
-            var nota = JsonConvert.DeserializeObject<NotasConsulta>(json);
-
-            if (nota == null)
-            {
-                return HttpNotFound();
-            }
-
-            return View(nota);
+            return View(nota); 
         }
 
-
-
-        public async Task<ActionResult> Actualizar(NotasConsulta notasConsulta)
+        public async Task<ActionResult> Guardar(NotasConsulta notasConsulta)
         {
             if (ModelState.IsValid)
             {
+                // Enviar la nota a la API
                 var content = new StringContent(JsonConvert.SerializeObject(notasConsulta), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PutAsync($"?id={notasConsulta.NotaId}", content);
+                var response = await _httpClient.PostAsync("", content);
+
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Index");
+                    // Obtener el ID de la nota recién creada
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    var notaCreada = JsonConvert.DeserializeObject<NotasConsulta>(responseString);
+                    int notaId = notaCreada.NotaId;
+      
+                    // Enviar una solicitud para asignar el NotaId a la Cita correspondiente
+                    var asignarNotaResponse = await _httpClient.PutAsync($"{ApiUrls.Citas}/AsignarNota/{notasConsulta.CitaId}/{notaId}", null);
+
+                    if (!asignarNotaResponse.IsSuccessStatusCode)
+                    {
+                        return View("Error"); // Error al asignar el ID  de la nota a la cita 
+                    }
+
+                    return RedirectToAction("CitasMedicos", "Citas");
                 }
-                return View("Error");
+
+                return View("Error"); // Falló al guardar la nota
             }
-            return View("Editar", notasConsulta);
+
+            return View(notasConsulta);
         }
 
-    } 
+
+
+    }
 }

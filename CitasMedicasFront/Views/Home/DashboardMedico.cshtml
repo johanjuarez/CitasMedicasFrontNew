@@ -1,0 +1,64 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Panel Médico";
+    var usuarioId = Session["UserId"] ?? 0;
+
+}
+
+<div class="container mt-4">
+    <h2><i class="fas fa-user-md text-success"></i> Bienvenido Dr. @Session["UserName"]</h2>
+
+    <div class="row mt-4 g-3">
+        <div class="col-md-6">
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <div class="card-body p-0">
+                        <div id="calendario"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <h5><i class="fas fa-user-clock"></i> Pacientes atendidos este mes</h5>
+                    <h3>@ViewBag.PacientesMes</h3>
+                    <p class="text-muted">Total de pacientes que han asistido.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendario');
+        var usuarioId = @usuarioId;
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            height: 650,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            buttonIcons: true,  // Íconos modernos para botones
+            dayMaxEvents: true, // Muestra "+x más" si hay muchos eventos
+            navLinks: true,     // Permite click en día o semana para cambiar de vista
+            events: function(fetchInfo, successCallback, failureCallback) {
+                fetch(`https://localhost:44323/api/Citas/Calendario/${usuarioId}`)
+                    .then(res => res.json())
+                    .then(data => successCallback(data))
+                    .catch(err => failureCallback(err));
+            }
+        });
+
+        calendar.render();
+    });
+</script>
+

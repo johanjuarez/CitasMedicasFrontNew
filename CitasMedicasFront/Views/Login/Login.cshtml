@@ -1,10 +1,8 @@
 ﻿@{
     ViewBag.Title = "Iniciar Sesión";
-    Layout = null; // Sin layout para más control
+    Layout = null;
 }
 
-<!DOCTYPE html>
-<html lang="es">
 
 <head>
     <meta charset="utf-8" />
@@ -57,81 +55,131 @@
     </style>
 </head>
 
-<body>
-
-    <div class="card card-login p-4">
-        <div class="text-center mb-4">
-            <i class="fas fa-user-circle fa-4x text-primary mb-3"></i>
-            <h2 class="h4 text-gray-900">Inicio de Sesión</h2>
-        </div>
-
-        @* Alerta de error si ViewBag.Error tiene texto *@
-        @if (!string.IsNullOrEmpty(ViewBag.Error))
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle"></i> @ViewBag.Error
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-            </div>
-        }
-
-        <form method="post" action="@Url.Action("Login", "Login")" class="needs-validation" novalidate>
-            @Html.AntiForgeryToken()
-
-            <div class="mb-3">
-                <label for="usuario" class="form-label">Usuario</label>
-                <input type="text" class="form-control" id="usuario" name="Usuario" placeholder="Ingrese su usuario" required />
-                <div class="invalid-feedback">
-                    Por favor ingrese su usuario.
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <label for="contraseña" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="contraseña" name="Contraseña" placeholder="Ingrese su contraseña" required />
-                <div class="invalid-feedback">
-                    Por favor ingrese su contraseña.
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">
-                <i class="fas fa-right-to-bracket"></i> Ingresar
-            </button>
-        </form>
+<div class="card card-login p-4">
+    <div class="text-center mb-4">
+        <i class="fas fa-user-circle fa-4x text-primary mb-3"></i>
+        <h2 class="h4 text-gray-900">Inicio de Sesión</h2>
     </div>
 
-    <!-- Bootstrap 5 JS Bundle (Popper + Bootstrap JS) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @* Alerta de error si ViewBag.Error tiene texto *@
+    @if (!string.IsNullOrEmpty(ViewBag.Error))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> @ViewBag.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+    }
 
-    <!-- Validación simple con Bootstrap -->
-    <script>
-        (function () {
-            'use strict'
+    <form id="formLogin" method="post" action="@Url.Action("Login", "Login")" class="needs-validation" novalidate>
+        @Html.AntiForgeryToken()
 
-            const forms = document.querySelectorAll('.needs-validation')
+        <div class="mb-3">
+            <label for="usuario" class="form-label">Usuario</label>
+            <input type="text" class="form-control" id="usuario" name="Usuario" placeholder="Ingrese su usuario" required />
+            <div class="invalid-feedback">
+                Por favor ingrese su usuario.
+            </div>
+        </div>
 
-            Array.from(forms).forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })()
+        <div class="mb-4">
+            <label for="contraseña" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="contraseña" name="Contraseña" placeholder="Ingrese su contraseña" required />
+            <div class="invalid-feedback">
+                Por favor ingrese su contraseña.
+            </div>
+        </div>
 
-        // Cerrar automáticamente la alerta después de 5 segundos
+        <button type="submit" class="btn btn-primary w-100" id="btnLogin">
+            <i class="fas fa-right-to-bracket"></i> Ingresar
+        </button>
+    </form>
+</div>
+
+<!-- Bootstrap 5 JS Bundle (Popper + Bootstrap JS) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+        const MAX_INTENTOS = 3;
+        const BLOQUEO_MINUTOS = 1;
+
+        // Ejecutar al cargar página
         window.addEventListener('DOMContentLoaded', () => {
-            const alertNode = document.querySelector('.alert');
-            if (alertNode) {
-                setTimeout(() => {
-                    const alert = bootstrap.Alert.getOrCreateInstance(alertNode);
-                    alert.close();
-                }, 5000);
+            verificarBloqueo();
+
+            // Si hay error del servidor, incrementar intentos
+            @if (!string.IsNullOrEmpty(ViewBag.Error))
+            {
+                <text>
+                    incrementarIntentoFallido();
+                </text>
             }
         });
-    </script>
 
-</body>
+        function verificarBloqueo() {
+            const bloqueoHasta = localStorage.getItem("bloqueadoHasta");
+            const btnLogin = document.getElementById("btnLogin");
 
-</html>
+            if (bloqueoHasta) {
+                const ahora = new Date();
+                const desbloqueo = new Date(bloqueoHasta);
+
+                if (ahora < desbloqueo) {
+                    btnLogin.disabled = true;
+                    alert(`Has excedido el número de intentos. Intenta de nuevo en ${BLOQUEO_MINUTOS} minutos.`);
+                } else {
+                    localStorage.removeItem("bloqueadoHasta");
+                    localStorage.setItem("intentosFallidos", "0");
+                    btnLogin.disabled = false;
+                }
+            }
+        }
+
+        function incrementarIntentoFallido() {
+            let intentos = parseInt(localStorage.getItem("intentosFallidos") || "0") + 1;
+            localStorage.setItem("intentosFallidos", intentos);
+
+            if (intentos >= MAX_INTENTOS) {
+                const desbloqueo = new Date();
+                desbloqueo.setMinutes(desbloqueo.getMinutes() + BLOQUEO_MINUTOS);
+                localStorage.setItem("bloqueadoHasta", desbloqueo.toISOString());
+
+                const btnLogin = document.getElementById("btnLogin");
+                btnLogin.disabled = true;
+
+                alert(`Has superado el límite de ${MAX_INTENTOS} intentos. Espera ${BLOQUEO_MINUTOS} minutos para intentar de nuevo.`);
+            }
+        }
+</script>
+
+
+
+<!-- Validación simple con Bootstrap -->
+<script>
+    (function () {
+        'use strict'
+
+        const forms = document.querySelectorAll('.needs-validation')
+
+        Array.from(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+
+    // Cerrar automáticamente la alerta después de 5 segundos
+    window.addEventListener('DOMContentLoaded', () => {
+        const alertNode = document.querySelector('.alert');
+        if (alertNode) {
+            setTimeout(() => {
+                const alert = bootstrap.Alert.getOrCreateInstance(alertNode);
+                alert.close();
+            }, 5000);
+        }
+    });
+</script>
+

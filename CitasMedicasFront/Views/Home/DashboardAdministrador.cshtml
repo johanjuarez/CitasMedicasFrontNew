@@ -1,0 +1,47 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Panel Administrador";
+}
+
+<div class="container mt-4">
+    <h2><i class="fas fa-user-shield text-primary"></i> Bienvenido, Administrador</h2>
+
+    <div class="row mt-4 g-3">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <h5><i class="fas fa-user-injured"></i> Pacientes</h5>
+                    <h3>@ViewBag.TotalPacientes</h3>
+                    <small>Total registrados</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">
+                    <h5><i class="fas fa-calendar-check"></i> Citas</h5>
+                    <h3>@ViewBag.TotalCitas</h3>
+                    <small>Totales en el sistema</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark shadow">
+                <div class="card-body">
+                    <h5><i class="fas fa-user-md"></i> Médicos</h5>
+                    <h3>@ViewBag.TotalMedicos</h3>
+                    <small>Registrados</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white shadow">
+                <div class="card-body">
+                    <h5><i class="fas fa-user-clock"></i> Recepcionistas</h5>
+                    <h3>@ViewBag.TotalRecepcionistas</h3>
+                    <small>Activos</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

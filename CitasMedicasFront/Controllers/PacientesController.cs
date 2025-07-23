@@ -1,11 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using CitasMedicasFront.Helpers;
+using CitasMedicasFront.Models;
+using ClosedXML.Excel;
+using ExcelDataReader;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
-using Newtonsoft.Json;
-using CitasMedicasFront.Models;  // Asegúrate de usar el espacio de nombres correcto
 
 namespace CitasMedicasFront.Controllers
 {
@@ -21,7 +28,7 @@ namespace CitasMedicasFront.Controllers
                 ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
             });
 
-            _httpClient.BaseAddress = new Uri("https://localhost:44323/api/Pacientes");
+            _httpClient.BaseAddress = new Uri(ApiUrls.Pacientes);
         }
 
         // GET: Pacientes
@@ -108,5 +115,119 @@ namespace CitasMedicasFront.Controllers
 
             return View("Error");
         }
+
+
+        private (bool IsValid, string ErrorMessage, Paciente Paciente) ValidarFila(DataRow row, int fila)
+        {
+            string nombre = row[0]?.ToString().Trim();
+            string apellidoP = row[1]?.ToString().Trim();
+            string apellidoM = row[2]?.ToString().Trim();
+            string fechaNacStr = row[3]?.ToString().Trim();
+            string sexo = row[4]?.ToString().Trim();
+            string correo = row[5]?.ToString().Trim();
+            string telefono = row[6]?.ToString().Trim();
+            string fechaRegStr = row[7]?.ToString().Trim();
+
+            if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(apellidoP) ||
+                string.IsNullOrWhiteSpace(apellidoM) || string.IsNullOrWhiteSpace(sexo) ||
+                string.IsNullOrWhiteSpace(correo) || string.IsNullOrWhiteSpace(telefono) ||
+                string.IsNullOrWhiteSpace(fechaNacStr) || string.IsNullOrWhiteSpace(fechaRegStr))
+            {
+                return (false, $"Error: Campos vacíos en fila {fila + 2}. No se guardó nada.", null);
+            }
+
+            if (!DateTime.TryParse(fechaNacStr, out DateTime fechaNac))
+                return (false, $"Error: Fecha de nacimiento inválida en fila {fila + 2}.", null);
+
+            if (!DateTime.TryParse(fechaRegStr, out DateTime fechaReg))
+                return (false, $"Error: Fecha de registro inválida en fila {fila + 2}.", null);
+
+            var paciente = new Paciente
+            {
+                Nombre = nombre,
+                ApellidoPaterno = apellidoP,
+                ApellidoMaterno = apellidoM,
+                FechaNacimiento = fechaNac,
+                Sexo = sexo,
+                Correo = correo,
+                Telefono = telefono,
+                FechaRegistro = fechaReg,
+                FechaUltimaModificacion = DateTime.Now
+            };
+
+            return (true, string.Empty, paciente);
+        }
+
+
+        public async Task<ActionResult> ImportarExcel(HttpPostedFileBase archivoExcel)
+        {
+            if (archivoExcel == null || archivoExcel.ContentLength == 0)
+            {
+                ModelState.AddModelError("", "Selecciona un archivo Excel.");
+                return View();
+            }
+
+            var extension = Path.GetExtension(archivoExcel.FileName);
+            if (extension == null || !extension.Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError("", "El archivo debe ser de tipo .xlsx");
+                return View();
+            }
+
+            var pacientes = new List<Paciente>();
+
+            try
+            {
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+                using (var stream = archivoExcel.InputStream)
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    var config = new ExcelDataSetConfiguration
+                    {
+                        ConfigureDataTable = _ => new ExcelDataTableConfiguration
+                        {
+                            UseHeaderRow = true
+                        }
+                    };
+
+                    var dataSet = reader.AsDataSet(config);
+                    var dataTable = dataSet.Tables[0];
+
+                    for (int i = 0; i < dataTable.Rows.Count; i++)
+                    {
+                        var row = dataTable.Rows[i];
+
+                        var resultado = ValidarFila(row, i);
+                        if (!resultado.IsValid)
+                        {
+                            ModelState.AddModelError("", resultado.ErrorMessage);
+                            return View();
+                        }
+
+                        pacientes.Add(resultado.Paciente);
+                    }
+                }
+
+                var json = JsonConvert.SerializeObject(pacientes);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync($"{ApiUrls.Pacientes}/Importar", content);
+
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction("Index");
+
+                ModelState.AddModelError("", "Error al guardar los pacientes en la API.");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error al procesar el archivo: " + ex.Message);
+            }
+
+            return View();
+        }
+
+
+
     }
 }

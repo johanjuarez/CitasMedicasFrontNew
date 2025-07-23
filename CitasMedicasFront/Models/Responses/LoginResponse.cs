@@ -9,6 +9,7 @@ namespace CitasMedicasFront.Models.Responses
     {
         public int IdUsuario { get; set; }
         public string Nombre { get; set; }
+        public string Usuario { get; set; }
         public int RolId { get; set; }
         public string Mensaje { get; set; }
     }

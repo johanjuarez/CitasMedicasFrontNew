@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using CitasMedicasFront.Helpers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -21,7 +22,7 @@ namespace CitasMedicasFront.Controllers
             {
                 ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
             });
-            _httpClient.BaseAddress = new Uri("https://localhost:44323/api/Consultorios");
+            _httpClient.BaseAddress = new Uri(ApiUrls.Consultorios);
         }
 
         // GET: Consultorios

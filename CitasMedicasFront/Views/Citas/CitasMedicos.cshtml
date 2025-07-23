@@ -27,13 +27,11 @@
                 <td>@cita.FechaHora - @cita.FechaHoraFin.ToString("HH:mm tt")</td>
                 <td>@cita.Motivo</td>
                 <td>
-                    @using (Html.BeginForm("Editar", "NotasConsulta", FormMethod.Post))
-                    {
-                        <input type="hidden" name="CitaId" value="@cita.CitaId" />
-                        <input type="hidden" name="PacienteId" value="@cita.PacienteId" />
-                        <input type="hidden" name="MedicoId" value="@cita.MedicoId" />
-                        <button type="submit" class="btn btn-link btn-sm">Ver / Crear Nota</button>
-                    }
+                    <a href="@Url.Action("Crear", "NotasConsulta", new { citaId = cita.CitaId, medicoId = cita.MedicoId, pacienteId = cita.PacienteId })"
+                       class="btn btn-sm btn-primary">
+                        Crear Nota
+                    </a>
+
                 </td>
 
                 <td>

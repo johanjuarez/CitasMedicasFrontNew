@@ -1,0 +1,38 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Panel Recepcionista";
+}
+
+<div class="container mt-4">
+    <h2><i class="fas fa-headset text-info"></i> Bienvenido(a) @Session["UserName"]</h2>
+
+    <div class="row mt-4 g-3">
+        <div class="col-md-4">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <h5><i class="fas fa-calendar-plus"></i> Citas pendientes</h5>
+                    <h3>@ViewBag.CitasPendientes</h3>
+                    <small>Por confirmar o asignar</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light border shadow">
+                <div class="card-body">
+                    <h5><i class="fas fa-user-plus text-primary"></i> Nuevos pacientes</h5>
+                    <h3>@ViewBag.NuevosPacientes</h3>
+                    <small>Registrados esta semana</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark shadow">
+                <div class="card-body">
+                    <h5><i class="fas fa-phone"></i> Llamadas agendadas</h5>
+                    <h3>@ViewBag.LlamadasHoy</h3>
+                    <small>Recordatorios telefónicos</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

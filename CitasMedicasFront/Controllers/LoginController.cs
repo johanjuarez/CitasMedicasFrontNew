@@ -23,7 +23,7 @@ namespace CitasMedicasFront.Controllers
                 ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
             });
 
-            _httpClient.BaseAddress = new Uri("https://localhost:44323/api/Auth"); 
+            _httpClient.BaseAddress = new Uri("https://localhost:44323/api/Auth/");
 
         }
 
@@ -33,7 +33,11 @@ namespace CitasMedicasFront.Controllers
             return View();
         }
 
-        // POST: Auth/Login
+        public ActionResult VerificarCodigo()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<ActionResult> Login(UsuarioLogin loginModel)
         {
@@ -43,7 +47,7 @@ namespace CitasMedicasFront.Controllers
             }
 
             var content = new StringContent(JsonConvert.SerializeObject(loginModel), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("Auth/Login", content);  // Llamada a la API
+            var response = await _httpClient.PostAsync("Login", content);  // Llamada a la API
 
             if (response.IsSuccessStatusCode)
             {
@@ -54,14 +58,54 @@ namespace CitasMedicasFront.Controllers
                 Session["UserId"] = userData.IdUsuario;
                 Session["UserName"] = userData.Nombre;
                 Session["RolId"] = userData.RolId;
-                return RedirectToAction("Index", "Home");
+                Session["Usuario"] = userData.Usuario;
+
+                // Guardar el usuario temporalmente para usarlo en la vista VerificarCodigo
+                TempData["UserName"] = userData.Usuario;
+
+                // Redirigir a la pantalla de validación de código
+                return RedirectToAction("VerificarCodigo", "Login");
             }
 
-            ViewBag.Error = "Usuario o contraseña incorrectos";  // Muestra error
+            ViewBag.Error = "Usuario o contraseña incorrectos";
             return View();
         }
 
-     
+
+        // POST: Verificar Código
+        [HttpPost]
+        public async Task<ActionResult> VerificarCodigo(string codigo)
+        {
+            var usuario = Session["UserName"]?.ToString();
+
+            if (string.IsNullOrEmpty(usuario))
+            {
+                ViewBag.Error = "Sesión expirada. Inicia sesión de nuevo.";
+                return RedirectToAction("Login");
+            }
+
+            var datos = new
+            {
+                Usuario = usuario,
+                Codigo = codigo
+            };
+
+            var contenido = new StringContent(JsonConvert.SerializeObject(datos), Encoding.UTF8, "application/json");
+            var respuesta = await _httpClient.PostAsync("VerificacionCodigo", contenido);
+
+            if (respuesta.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            ViewBag.Error = "Código incorrecto.";
+            TempData.Keep("usuario");
+            return View();
+        }
+
+
+
+
         // GET: Auth/Logout
         public ActionResult Logout()
         {

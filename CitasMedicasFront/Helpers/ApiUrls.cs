@@ -14,5 +14,6 @@
         public static string Usuarios => $"{Base}Usuarios";
         public static string Departamentos => $"{Base}Departamentos";
         public static string NotasConsulta => $"{Base}NotasConsulta";
+        public static string Reportes => $"{Base}Reportes";
     }
 }

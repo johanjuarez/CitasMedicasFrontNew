@@ -110,22 +110,6 @@ namespace CitasMedicasFront.Controllers
             return View("Editar", usuario);
         }
 
-        //public async Task<ActionResult> Guardar(Usuarios usuarios)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var content = new StringContent(JsonConvert.SerializeObject(usuarios), Encoding.UTF8, "application/json");
-        //        var response = await _httpClient.PostAsync("", content);
-
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            return RedirectToAction("Index");
-        //        }
-        //        return View("Error");
-        //    }
-        //    return View(usuarios);
-        //}
-
         [HttpPost]
         public async Task<ActionResult> Guardar(Usuarios usuarios, HttpPostedFileBase FotoFile)
         {
@@ -133,7 +117,7 @@ namespace CitasMedicasFront.Controllers
             {
                 // Guardar imagen antes de llamar a la API
                 if (FotoFile != null)
-                    usuarios.RutaImagen = GuardarImagen(FotoFile, usuarios.Usuario); // o usuarios.Nombre
+                    usuarios.RutaImagen = GuardarImagen(FotoFile, usuarios.Usuario); 
 
                 var content = new StringContent(JsonConvert.SerializeObject(usuarios), Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync("", content);
@@ -162,7 +146,7 @@ namespace CitasMedicasFront.Controllers
             if (archivo == null || string.IsNullOrWhiteSpace(nombreUsuario))
                 return null;
 
-            // Carpeta relativa dentro del proyecto (para que IIS Express pueda servir las imágenes)
+            // Carpeta dentro del proyecto donde se guardarán las imágenes
             string carpetaRelativa = "~/ImagenesUsuarios/";
             string rutaRelativa = carpetaRelativa + nombreUsuario + Path.GetExtension(archivo.FileName);
 
@@ -175,7 +159,7 @@ namespace CitasMedicasFront.Controllers
             // Guardamos el archivo físicamente en la ruta mapeada
             archivo.SaveAs(rutaFisica);
 
-            // Retornamos la ruta para usar en el navegador (URL relativa)
+            // Retornamos la ruta para usar en el navegador 
             return Url.Content(rutaRelativa);
         }
 

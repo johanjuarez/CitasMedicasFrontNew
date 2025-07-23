@@ -10,17 +10,35 @@ namespace CitasMedicasFront.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            var rolId = Session["RolId"]?.ToString();
+
+            switch (rolId)
+            {
+                case "2": // Administrador
+                    return View("DashboardAdministrador");
+                case "4": // Médico
+                    return View("DashboardMedico");
+                case "6": // Recepcionista
+                    return View("DashboardRecepcionista");
+                default:
+                    return RedirectToAction("Login", "Login");
+            }
         }
 
-        public ActionResult About()
+        public ActionResult DashboardAdministrador()
         {
-            ViewBag.Message = "Your application description page.";
 
             return View();
         }
 
-        public ActionResult Contact()
+        public ActionResult DashboardMedico()
+        {
+
+
+            return View();
+        }
+
+        public ActionResult DashboardRecepcionista()
         {
             ViewBag.Message = "Your contact page.";
 

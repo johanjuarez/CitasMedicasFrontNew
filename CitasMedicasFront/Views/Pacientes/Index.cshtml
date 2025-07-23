@@ -8,9 +8,14 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2><i class="fas fa-user-injured text-primary"></i> Gestión de Pacientes</h2>
-        <a href="@Url.Action("Crear", "Pacientes")" class="btn btn-success">
-            <i class="fas fa-user-plus"></i> Nuevo Paciente
-        </a>
+        <div>
+            <a href="@Url.Action("Crear", "Pacientes")" class="btn btn-success">
+                <i class="fas fa-user-plus"></i> Nuevo Paciente
+            </a>
+            <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#modalCargarExcel">
+                <i class="fas fa-file-excel"></i> Cargar Excel
+            </button>
+        </div>
     </div>
 
     <div class="card shadow-sm border-0">
@@ -59,12 +64,56 @@
     </div>
 </div>
 
+<!-- Modal para cargar Excel -->
+<div class="modal fade" id="modalCargarExcel" tabindex="-1" role="dialog" aria-labelledby="modalCargarExcelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="formExcel" action="@Url.Action("ImportarExcel", "Pacientes")" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCargarExcelLabel">Cargar archivo Excel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="archivoExcel">Selecciona un archivo .xlsx</label>
+                        <input type="file" name="archivoExcel" id="archivoExcel" accept=".xlsx" class="form-control" required />
+                    </div>
+                    <hr />
+                    <h6>Estructura esperada del archivo Excel:</h6>
+                    <ul>
+                        <li><strong>Columna 1:</strong> Nombre</li>
+                        <li><strong>Columna 2:</strong> Apellido Paterno</li>
+                        <li><strong>Columna 3:</strong> Apellido Materno</li>
+                        <li><strong>Columna 4:</strong> Fecha de Nacimiento (YYYY-MM-DD)</li>
+                        <li><strong>Columna 5:</strong> Sexo</li>
+                        <li><strong>Columna 6:</strong> Correo electrónico</li>
+                        <li><strong>Columna 7:</strong> Teléfono</li>
+                        <li><strong>Columna 8:</strong> Fecha de Registro (YYYY-MM-DD)</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Subir y procesar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- DataTables JS + CSS -->
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<!-- Bootstrap JS (para modales) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 
 <!-- Font Awesome (si no está ya incluido en el layout) -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
@@ -80,3 +129,29 @@
         });
     });
 </script>
+
+<script>
+    document.getElementById('formExcel').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const data = new FormData(form);
+
+        fetch('/Pacientes/ImportarExcel', {
+            method: 'POST',
+            body: data
+        })
+            .then(response => {
+                if (response.ok) {
+                    Swal.fire('¡Éxito!', 'Pacientes cargados correctamente.', 'success')
+                        .then(() => location.reload());
+                } else {
+                    Swal.fire('Error', 'Ocurrió un problema al cargar el archivo.', 'error');
+                }
+            })
+            .catch(() => {
+                Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
+            });
+    });
+</script>
+

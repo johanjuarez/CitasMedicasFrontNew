@@ -1,0 +1,70 @@
+﻿@model CitasMedicasFront.Models.NotasConsulta
+
+@{
+    ViewBag.Title = "Crear Nota de Consulta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Crear Nota de Consulta</h2>
+
+@using (Html.BeginForm("Guardar", "NotasConsulta", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(m => m.CitaId)
+    @Html.HiddenFor(m => m.MedicoId)
+    @Html.HiddenFor(m => m.PacienteId)
+
+    <!-- CitaId -->
+    <!--<div class="form-group">
+        <label for="CitaId">ID de la Cita</label>
+        <input type="number" name="CitaId" id="CitaId" class="form-control" required />
+    </div>-->
+
+    <!-- MedicoId -->
+    <!--<div class="form-group">
+        <label for="MedicoId">ID del Médico</label>
+        <input type="number" name="MedicoId" id="MedicoId" class="form-control" required />
+    </div>-->
+
+    <!-- PacienteId -->
+    <!--<div class="form-group">
+        <label for="PacienteId">ID del Paciente</label>
+        <input type="number" name="PacienteId" id="PacienteId" class="form-control" required />
+    </div>-->
+
+    <!-- Sintomas -->
+    <div class="form-group">
+        <label for="Sintomas">Síntomas</label>
+        <textarea name="Sintomas" id="Sintomas" class="form-control" rows="3" required></textarea>
+    </div>
+
+    <!-- Observaciones -->
+    <div class="form-group">
+        <label for="Observaciones">Observaciones</label>
+        <textarea name="Observaciones" id="Observaciones" class="form-control" rows="3" required></textarea>
+    </div>
+
+    <!-- Diagnostico -->
+    <div class="form-group">
+        <label for="Diagnostico">Diagnóstico</label>
+        <textarea name="Diagnostico" id="Diagnostico" class="form-control" rows="3" required></textarea>
+    </div>
+
+    <!-- Tratamiento -->
+    <div class="form-group">
+        <label for="Tratamiento">Tratamiento</label>
+        <textarea name="Tratamiento" id="Tratamiento" class="form-control" rows="3" required></textarea>
+    </div>
+
+    <!-- Medicamentos -->
+    <div class="form-group">
+        <label for="Medicamentos">Medicamentos</label>
+        <textarea name="Medicamentos" id="Medicamentos" class="form-control" rows="3" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-outline-success">Guardar</button>
+}
+
+<hr />
+<a href="@Url.Action("Index", "NotasConsulta")" class="btn btn-outline-secondary">Volver a la lista</a>

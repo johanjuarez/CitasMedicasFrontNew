@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using CitasMedicasFront.Helpers; 
+using CitasMedicasFront.Helpers;
 using CitasMedicasFront.Models;
 
 namespace CitasMedicasFront.Controllers
@@ -16,16 +16,13 @@ namespace CitasMedicasFront.Controllers
 
         public RolesController()
         {
-            _httpClient = new HttpClient(new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-            });
-            _httpClient.BaseAddress = new Uri(ApiUrls.Roles); 
+            // Usamos la instanica 
+            _httpClient = HttpClientInstancia.Instancia;
         }
 
         public async Task<ActionResult> Index()
         {
-            var response = await _httpClient.GetStringAsync("");
+            var response = await _httpClient.GetStringAsync(ApiUrls.Roles);
             var roles = JsonConvert.DeserializeObject<List<Rol>>(response);
             return View(roles);
         }
@@ -40,7 +37,7 @@ namespace CitasMedicasFront.Controllers
             if (ModelState.IsValid)
             {
                 var content = new StringContent(JsonConvert.SerializeObject(rol), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync("", content);
+                var response = await _httpClient.PostAsync(ApiUrls.Roles, content);
                 if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction("Index");
@@ -52,11 +49,11 @@ namespace CitasMedicasFront.Controllers
 
         public async Task<ActionResult> Editar(int id)
         {
-            var response = await _httpClient.GetStringAsync($"?id={id}");
+            var response = await _httpClient.GetStringAsync($"{ApiUrls.Roles}?id={id}");
             var rol = JsonConvert.DeserializeObject<Rol>(response);
             if (rol == null)
             {
-                return HttpNotFound();  
+                return HttpNotFound();
             }
             return View(rol);
         }
@@ -66,7 +63,7 @@ namespace CitasMedicasFront.Controllers
             if (ModelState.IsValid)
             {
                 var content = new StringContent(JsonConvert.SerializeObject(rol), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PutAsync($"?id={rol.RolId}", content);
+                var response = await _httpClient.PutAsync($"{ApiUrls.Roles}?id={rol.RolId}", content);
                 if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction("Index");
@@ -78,7 +75,7 @@ namespace CitasMedicasFront.Controllers
 
         public async Task<ActionResult> Eliminar(int id)
         {
-            var response = await _httpClient.DeleteAsync($"?id={id}");
+            var response = await _httpClient.DeleteAsync($"{ApiUrls.Roles}?id={id}");
 
             if (response.IsSuccessStatusCode)
             {

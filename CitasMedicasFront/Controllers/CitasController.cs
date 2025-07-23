@@ -28,7 +28,7 @@ namespace CitasMedicasFront.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var response = await _httpClient.GetStringAsync(""); // Ya que BaseAddress contiene /api/Citas/
+            var response = await _httpClient.GetStringAsync("");
             var citas = JsonConvert.DeserializeObject<List<Cita>>(response);
             return View(citas);
         }
@@ -120,34 +120,6 @@ namespace CitasMedicasFront.Controllers
 
             return View("Error");
         }
-
-        [HttpPost]
-        public async Task<ActionResult> CrearNotaDesdeCita(NotaCrearDto dto)
-        {
-            // Serializamos el DTO a JSON para enviar a la API
-            var json = JsonConvert.SerializeObject(dto);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            // Consumimos el endpoint que crea la nota
-
-            //$"{ApiUrls.Usuarios}/GetUsuarioConPersonal/{usuarioId}"
-            var response = await _httpClient.PostAsync($"{ApiUrls.NotasConsulta}/CrearNota", content);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                // Manejo de error
-                return View("Error");
-            }
-
-            // Obtenemos el id de la nota creada (suponiendo que la API devuelve un objeto con notaId)
-            var responseString = await response.Content.ReadAsStringAsync();
-            var data = JsonConvert.DeserializeObject<dynamic>(responseString);
-            int notaId = data.notaId;
-
-            // Redirigimos a la acción para editar la nota creada (puede ser otro controlador)
-            return RedirectToAction("Editar", "NotasConsulta", new { id = notaId });
-        }
-
 
         public ActionResult Calendario()
         {

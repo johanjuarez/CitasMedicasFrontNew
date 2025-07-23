@@ -1,0 +1,83 @@
+﻿@model CitasMedicasFront.Models.DTOS.CitaDetalleDto
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Resumen de Cita Médica</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body class="p-4">
+
+    <!-- Encabezado con logo y datos del consultorio -->
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div class="d-flex align-items-center">
+            <img src="~/Content/Images/Logomedicare.png" alt="Logo" style="height: 80px;" class="mr-3" />
+            <div>
+                <h4 class="mb-0">Clínica Medicare</h4>
+                <small class="text-muted">www.clinicamedicare.com</small>
+            </div>
+        </div>
+        <div class="text-right">
+            <p class="mb-1"><i class="fas fa-map-marker-alt text-secondary"></i> Calle Salud #123, Col. Centro</p>
+            <p class="mb-1"><i class="fas fa-phone text-secondary"></i> (555) 123-4567</p>
+            <p class="mb-0"><i class="fas fa-envelope text-secondary"></i> contacto@consultorio.com</p>
+        </div>
+    </div>
+
+    <!-- Título principal -->
+    <div class="text-center mb-4">
+        <h3 class="text-primary"><i class="fas fa-file-medical-alt"></i> Resumen de Cita Médica</h3>
+        <p class="text-muted">Generado el @DateTime.Now.ToString("dd/MM/yyyy")</p>
+    </div>
+
+    <!-- Sección: Datos del Paciente -->
+    <div class="mb-4">
+        <h5 class="text-info border-bottom pb-2"><i class="fas fa-user-injured"></i> Datos del Paciente</h5>
+        <div class="row">
+            <div class="col-6"><strong>Nombre:</strong> @Model.NombrePaciente</div>
+            <div class="col-6"><strong>Sexo:</strong> @Model.Sexo</div>
+        </div>
+        <div class="row">
+            <div class="col-6"><strong>Fecha de Nacimiento:</strong> @Model.FechaNacimiento.ToString("dd/MM/yyyy")</div>
+            <div class="col-6"><strong>Teléfono:</strong> @Model.Telefono</div>
+        </div>
+        <div><strong>Correo:</strong> @Model.Correo</div>
+    </div>
+
+    <!-- Sección: Datos del Médico -->
+    <div class="mb-4">
+        <h5 class="text-info border-bottom pb-2"><i class="fas fa-user-md"></i> Datos del Médico</h5>
+        <div class="row">
+            <div class="col-6"><strong>Nombre:</strong> @Model.NombreMedico</div>
+            <div class="col-6"><strong>Especialidad:</strong> @Model.Especialidad</div>
+        </div>
+    </div>
+
+    <!-- Sección: Detalles de la Cita -->
+    <div class="mb-4">
+        <h5 class="text-info border-bottom pb-2"><i class="fas fa-calendar-check"></i> Detalles de la Cita</h5>
+        <div class="row">
+            <div class="col-6"><strong>Fecha:</strong> @Model.FechaHora.ToString("dd/MM/yyyy")</div>
+            <div class="col-6"><strong>Hora Inicio:</strong> @Model.FechaHora.ToString("hh:mm tt")</div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <strong>Hora Fin:</strong> @(Model.FechaHoraFin.HasValue ? Model.FechaHoraFin.Value.ToString("hh:mm tt") : "No definido")
+            </div>
+            <div class="col-6"><strong>Consultorio:</strong> @Model.NombreConsultorio</div>
+        </div>
+        <div class="mt-2"><strong>Motivo:</strong> @Model.Motivo</div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer class="text-center mt-5 border-top pt-3">
+        <small class="text-muted">Sistema de Citas Médicas - Medicare</small>
+    </footer>
+
+</body>
+</html>

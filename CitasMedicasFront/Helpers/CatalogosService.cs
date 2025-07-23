@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CitasMedicasFront.Models.DTOS;
 
 namespace CitasMedicasFront.Helpers
 {
@@ -13,8 +14,12 @@ namespace CitasMedicasFront.Helpers
         public async Task<List<Departamento>> ObtenerDepartamentosAsync()
         {
             var json = await _httpClient.GetStringAsync(ApiUrls.Departamentos);
-            return JsonConvert.DeserializeObject<List<Departamento>>(json);
+            var encryptedDto = JsonConvert.DeserializeObject<EncryptedDto>(json);
+            var jsonDesencriptado = Encriptado.Desencriptar(encryptedDto.Data);
+
+            return JsonConvert.DeserializeObject<List<Departamento>>(jsonDesencriptado);
         }
+
         public async Task<List<Paciente>> ObtenerPacientesAsync()
         {
             var response = await _httpClient.GetStringAsync(ApiUrls.Pacientes);
